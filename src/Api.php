@@ -39,7 +39,7 @@ final class Api
         $response = $this->apiClient->sendRequest(
             new RequestObject(
                 'POST',
-                'login',
+                '/login',
                 [],
                 [],
                 [
@@ -86,7 +86,7 @@ final class Api
         $response = $this->apiClient->sendRequest(
             new RequestObject(
                 'GET',
-                'libraries'
+                '/libraries'
             )
         );
 
@@ -126,8 +126,10 @@ final class Api
         $response = $this->apiClient->sendRequest(
             new RequestObject(
                 'GET',
-                'readers',
-                [$eppn],
+                '/readers/:eppn',
+                [
+                    ':eppn' => $eppn,
+                ],
                 $advanced ? ['expand' => 'status'] : []
             )
         );
@@ -163,8 +165,10 @@ final class Api
         $response = $this->apiClient->sendRequest(
             new RequestObject(
                 'PUT',
-                'readers',
-                [$eppn],
+                '/readers/:eppn',
+                [
+                    ':eppn' => $eppn,
+                ],
                 [],
                 $reader->toArray()
             )
@@ -200,7 +204,7 @@ final class Api
 
     /**
      * Get tickets for reader
-     * GET /tickets
+     * GET /readers/:eppn/tickets
      *
      * @param string $eppn
      * @return string[] List of ticket ids
@@ -213,10 +217,9 @@ final class Api
         $response = $this->apiClient->sendRequest(
             new RequestObject(
                 'GET',
-                'tickets',
-                [],
+                '/readers/:eppn/tickets',
                 [
-                    'eppn' => $eppn,
+                    ':eppn' => $eppn,
                 ]
             )
         );
@@ -239,7 +242,7 @@ final class Api
 
     /**
      * Get tickets for reader with details
-     * GET /tickets
+     * GET /readers/:eppn/tickets
      *
      * @param string $eppn
      * @return string[][] List of tickets with details
@@ -252,10 +255,11 @@ final class Api
         $response = $this->apiClient->sendRequest(
             new RequestObject(
                 'GET',
-                'tickets',
-                [],
+                '/readers/:eppn/tickets',
                 [
-                    'eppn' => $eppn,
+                    ':eppn' => $eppn,
+                ],
+                [
                     'expand' => 'detail',
                 ]
             )
@@ -279,8 +283,9 @@ final class Api
 
     /**
      * Create new ticket for reader
-     * POST /tickets
+     * POST /readers/:eppn/tickets
      *
+     * @param string $eppn
      * @param \Mzk\ZiskejApi\RequestModel\Ticket $ticket
      * @return string
      *
@@ -288,13 +293,15 @@ final class Api
      * @throws \Mzk\ZiskejApi\Exception\ApiException
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function createTicket(Ticket $ticket): string
+    public function createTicket(string $eppn, Ticket $ticket): string
     {
         $response = $this->apiClient->sendRequest(
             new RequestObject(
                 'POST',
-                'tickets',
-                [],
+                '/readers/:eppn/tickets',
+                [
+                    ':eppn' => $eppn,
+                ],
                 [],
                 $ticket->toArray()
             )
@@ -323,23 +330,25 @@ final class Api
 
     /**
      * Ticket detail
-     * GET /tickets/:id
+     * GET /readers/:eppn/tickets/:ticket_id
      *
-     * @param string $id
      * @param string $eppn
+     * @param string $ticket_id
      * @return string[] Ticket details
      *
      * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function getTicket(string $id, string $eppn): array
+    public function getTicket(string $eppn, string $ticket_id): array
     {
         $response = $this->apiClient->sendRequest(
             new RequestObject(
                 'GET',
-                'tickets',
-                [$id],
-                ['eppn' => $eppn]
+                '/readers/:eppn/tickets/:ticket_id',
+                [
+                    ':eppn' => $eppn,
+                    ':ticket_id' => $ticket_id,
+                ]
             )
         );
 

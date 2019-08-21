@@ -77,7 +77,7 @@ final class ApiTest extends TestCase
         $api = new Api($apiClient);
 
         $dotEnv = new Dotenv();
-        $dotEnv->load(__DIR__.'/.env');
+        $dotEnv->load(__DIR__ . '/.env');
 
         $token = $api->login($_ENV['username'], $_ENV['password']);
 
@@ -238,12 +238,11 @@ final class ApiTest extends TestCase
         $api = ApiFactory::createApi();
 
         $ticket = new Ticket(
-            $this->eppn,
             $this->docId,
             new DateTimeImmutable($this->date)
         );
 
-        $output = $api->createTicket($ticket);
+        $output = $api->createTicket($this->eppn, $ticket);
 
         $this->assertIsString($output);
     }
@@ -253,7 +252,6 @@ final class ApiTest extends TestCase
         $api = ApiFactory::createApi();
 
         $ticket = new Ticket(
-            $this->eppn,
             $this->docId,
             new DateTimeImmutable($this->date)
         );
@@ -261,7 +259,7 @@ final class ApiTest extends TestCase
         $ticket->setNote($this->note);
         $ticket->setDocumentAltIds($this->docAltIds);
 
-        $output = $api->createTicket($ticket);
+        $output = $api->createTicket($this->eppn, $ticket);
 
         $this->assertIsString($output);
     }
@@ -270,7 +268,7 @@ final class ApiTest extends TestCase
     {
         $api = ApiFactory::createApi();
 
-        $output = $api->getTicket($this->ticketId, $this->eppn);
+        $output = $api->getTicket($this->eppn, $this->ticketId);
 
         $this->assertIsArray($output);
     }

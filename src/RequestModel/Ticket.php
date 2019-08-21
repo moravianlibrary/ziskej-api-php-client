@@ -8,12 +8,6 @@ class Ticket
 {
 
     /**
-     * Reader eppn
-     * @var string
-     */
-    private $eppn;
-
-    /**
      * Document ID
      * @var string
      */
@@ -40,15 +34,13 @@ class Ticket
     /**
      * Ticket constructor.
      *
-     * @param string $eppn
      * @param string $documentId
      *
      * @param \DateTimeImmutable $dateRequested
      */
-    public function __construct(string $eppn, string $documentId, DateTimeImmutable $dateRequested)
+    public function __construct(string $documentId, DateTimeImmutable $dateRequested)
     {
         //@todo accept $dateRequested min today + 3 working days
-        $this->eppn = $eppn;
         $this->documentId = $documentId;
         $this->dateRequested = $dateRequested;
     }
@@ -59,7 +51,6 @@ class Ticket
     public function toArray(): array
     {
         $return = [
-            'eppn' => $this->eppn,
             'ticket_type' => 'mvs',
             'doc_id' => $this->documentId,
             'date_requested' => $this->dateRequested->format('Y-m-d'),
@@ -74,16 +65,6 @@ class Ticket
         }
 
         return $return;
-    }
-
-    public function getEppn(): string
-    {
-        return $this->eppn;
-    }
-
-    public function setEppn(string $eppn): void
-    {
-        $this->eppn = $eppn;
     }
 
     public function getDocumentId(): string
