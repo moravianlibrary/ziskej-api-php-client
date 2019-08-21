@@ -80,34 +80,10 @@ final class ApiClient
      */
     public function sendRequest(RequestObject $requestObject): ResponseInterface
     {
-        $method = $requestObject->getMethod();
-
-        $uri = '/' . $requestObject->getEndpoint();
-
-        if (!empty($requestObject->getUrlQuery())) {
-            $uri .= '/' . implode('/', $requestObject->getUrlQuery());
-        }
-
-        $headers = [
-            'Content-Type' => 'application/json',
-        ];
-
-        $paramsUrl = $requestObject->getParamsUrl();
-        if (!empty($paramsUrl)) {
-            $uri .= '?' . http_build_query($paramsUrl);
-        }
-        //@todo make url better way
-
-        $paramsData = $requestObject->getParamsData();
-
-        $json_encoded = json_encode($paramsData);
-
-        $body = stream_for($json_encoded);
-
         $messageFactory = MessageFactoryDiscovery::find();
 
         if ($requestObject->getMethod() === 'POST' && !empty($requestObject->getParamsData())) {
-            // Send form values
+            // POST request with form values
             $streamFactory = StreamFactoryDiscovery::find();
             $builder = new MultipartStreamBuilder($streamFactory);
             /**
@@ -127,10 +103,20 @@ final class ApiClient
                 'Content-Type' => 'multipart/form-data; boundary="' . $boundary . '"',
             ];
             $body = $builder->build();
+        } else {
+            // other requests
+            $headers = [
+                'Content-Type' => 'application/json',
+            ];
+            $body = stream_for(json_encode($requestObject->getParamsData()));
         }
 
-
-        $request = $messageFactory->createRequest($method, $uri, $headers, $body);
+        $request = $messageFactory->createRequest(
+            $requestObject->getMethod(),
+            $requestObject->getUri(),
+            $headers,
+            $body
+        );
 
         return $this->client->sendRequest($request);
     }

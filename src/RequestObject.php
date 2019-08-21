@@ -6,11 +6,13 @@ class RequestObject
 {
 
     /**
+     * HTTP Method
      * @var string
      */
     protected $method;
 
     /**
+     * URI endpoint
      * @var string
      */
     protected $endpoint;
@@ -21,11 +23,13 @@ class RequestObject
     protected $urlQuery = [];
 
     /**
+     * URL params
      * @var string[]
      */
     protected $paramsUrl = [];
 
     /**
+     * Data params
      * @var string[]
      */
     protected $paramsData = [];
@@ -58,33 +62,48 @@ class RequestObject
         return $this->method;
     }
 
-    public function getEndpoint(): string
-    {
-        return $this->endpoint;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getUrlQuery(): array
-    {
-        return $this->urlQuery;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getParamsUrl(): array
-    {
-        return $this->paramsUrl;
-    }
-
     /**
      * @return string[]
      */
     public function getParamsData(): array
     {
         return $this->paramsData;
+    }
+
+    public function getUri(): string
+    {
+        $uri = '';
+
+        if (!empty($this->urlQuery)) {
+            $uri .= $this->render($this->endpoint, $this->urlQuery);
+        } else {
+            $uri .= $this->endpoint;
+        }
+
+        $paramsUrl = $this->paramsUrl;
+        if (!empty($paramsUrl)) {
+            $uri .= '?' . http_build_query($paramsUrl);
+        }
+
+        //@todo create url by using Url object
+
+        return $uri;
+    }
+
+    /**
+     * @param string $string
+     * @param string[] $replaces
+     * @return string
+     */
+    private function render(string $string, array $replaces): string
+    {
+        $search = [];
+        $replace = [];
+        foreach ($replaces as $key => $value) {
+            $search[] = $key;
+            $replace[] = $value;
+        }
+        return str_replace($search, $replace, $string);
     }
 
 }
