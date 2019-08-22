@@ -3,6 +3,7 @@
 namespace Mzk\ZiskejApi;
 
 use Mzk\ZiskejApi\RequestModel\Message;
+use Mzk\ZiskejApi\RequestModel\Messages;
 use Mzk\ZiskejApi\RequestModel\Reader;
 use Mzk\ZiskejApi\RequestModel\Ticket;
 
@@ -451,6 +452,44 @@ final class Api
         return (array)$return;
     }
 
-    //@todo PUT /messages/:ticket_id/read
+    /**
+     * Set messages as read
+     *
+     * @param string $eppn
+     * @param string $ticket_id
+     * @param \Mzk\ZiskejApi\RequestModel\Messages $messages
+     * @return string[]
+     *
+     * @throws \Http\Client\Exception
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     */
+    public function readMessages(string $eppn, string $ticket_id, Messages $messages): array
+    {
+        $response = $this->apiClient->sendRequest(
+            new RequestObject(
+                'PUT',
+                '/readers/:eppn/tickets/:ticket_id/messages',
+                [
+                    ':eppn' => $eppn,
+                    ':ticket_id' => $ticket_id,
+                ],
+                [],
+                $messages->toArray()
+            )
+        );
+
+        switch ($response->getStatusCode()) {
+            case 200:
+                $contents = $response->getBody()->getContents();
+                $array = json_decode($contents, true);
+                $return = $array;
+                break;
+            default:
+                throw new \Mzk\ZiskejApi\Exception\ApiResponseException($response);
+                break;
+        }
+
+        return (array)$return;
+    }
 
 }
