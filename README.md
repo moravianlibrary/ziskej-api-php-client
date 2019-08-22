@@ -1,7 +1,7 @@
 # Ziskej API PHP client
 
 ## Requirements
-...
+- php-http/client-implementation
 
 ## Installation & Usage
 ### Composer
