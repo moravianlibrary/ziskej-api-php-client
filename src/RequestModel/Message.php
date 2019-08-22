@@ -1,8 +1,6 @@
 <?php declare(strict_types = 1);
 
-
 namespace Mzk\ZiskejApi\RequestModel;
-
 
 class Message
 {
@@ -23,17 +21,14 @@ class Message
      */
     public function toArray(): array
     {
-        $return = [
+        return [
             'text' => $this->text,
         ];
-
-        return $return;
     }
 
     public function getText(): string
     {
         return $this->text;
     }
-
 
 }
