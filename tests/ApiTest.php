@@ -5,6 +5,7 @@ namespace Mzk\ZiskejApi;
 use DateTimeImmutable;
 use Http\Message\Authentication\Bearer;
 use Monolog\Logger;
+use Mzk\ZiskejApi\RequestModel\Message;
 use Mzk\ZiskejApi\RequestModel\Reader;
 use Mzk\ZiskejApi\RequestModel\Ticket;
 use Symfony\Component\Dotenv\Dotenv;
@@ -42,6 +43,11 @@ final class ApiTest extends TestCase
      * @var string
      */
     private $note = 'This is a note';
+
+    /**
+     * @var string
+     */
+    private $messageText = 'This is my new message';
 
     /**
      * @var string
@@ -272,5 +278,31 @@ final class ApiTest extends TestCase
 
         $this->assertIsArray($output);
     }
+
+    /*
+     * MESSAGES
+     */
+
+    public function testApiGetMessages(): void
+    {
+        $api = ApiFactory::createApi();
+
+        $output = $api->getMessages($this->eppn, $this->ticketId);
+
+        $this->assertIsArray($output);
+    }
+
+    public function testApiCreateMessage(): void
+    {
+        $api = ApiFactory::createApi();
+
+        $message = new Message($this->messageText);
+
+        $output = $api->createMessage($this->eppn, $this->ticketId, $message);
+
+        $this->assertIsArray($output);
+    }
+
+
 
 }

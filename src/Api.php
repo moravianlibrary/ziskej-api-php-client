@@ -2,6 +2,7 @@
 
 namespace Mzk\ZiskejApi;
 
+use Mzk\ZiskejApi\RequestModel\Message;
 use Mzk\ZiskejApi\RequestModel\Reader;
 use Mzk\ZiskejApi\RequestModel\Ticket;
 
@@ -371,8 +372,85 @@ final class Api
      * MESSAGES
      */
 
-    //@todo GET /messages/:ticket_id
-    //@todo POST /messages/:ticket_id
+    /**
+     * Get notes for order
+     *
+     * @param string $eppn
+     * @param string $ticket_id
+     * @return string[][]
+     *
+     * @throws \Http\Client\Exception
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     */
+    public function getMessages(string $eppn, string $ticket_id): array
+    {
+        $response = $this->apiClient->sendRequest(
+            new RequestObject(
+                'GET',
+                '/readers/:eppn/tickets/:ticket_id/messages',
+                [
+                    ':eppn' => $eppn,
+                    ':ticket_id' => $ticket_id,
+                ]
+            )
+        );
+
+        switch ($response->getStatusCode()) {
+            case 200:
+                $contents = $response->getBody()->getContents();
+                $array = json_decode($contents, true);
+                $return = isset($array['items']) || is_array($array['items'])
+                    ? $array['items']
+                    : [];
+                break;
+            default:
+                throw new \Mzk\ZiskejApi\Exception\ApiResponseException($response);
+                break;
+        }
+
+        return (array)$return;
+    }
+
+    /**
+     * Create new note to order
+     *
+     * @param string $eppn
+     * @param string $ticket_id
+     * @param \Mzk\ZiskejApi\RequestModel\Message $message
+     * @return string[]
+     *
+     * @throws \Http\Client\Exception
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     */
+    public function createMessage(string $eppn, string $ticket_id, Message $message): array
+    {
+        $response = $this->apiClient->sendRequest(
+            new RequestObject(
+                'POST',
+                '/readers/:eppn/tickets/:ticket_id/messages',
+                [
+                    ':eppn' => $eppn,
+                    ':ticket_id' => $ticket_id,
+                ],
+                [],
+                $message->toArray()
+            )
+        );
+
+        switch ($response->getStatusCode()) {
+            case 201:
+                $contents = $response->getBody()->getContents();
+                $array = json_decode($contents, true);
+                $return = $array;
+                break;
+            default:
+                throw new \Mzk\ZiskejApi\Exception\ApiResponseException($response);
+                break;
+        }
+
+        return (array)$return;
+    }
+
     //@todo PUT /messages/:ticket_id/read
 
 }
