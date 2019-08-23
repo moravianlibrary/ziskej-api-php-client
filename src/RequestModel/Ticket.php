@@ -72,19 +72,9 @@ class Ticket
         return $this->documentId;
     }
 
-    public function setDocumentId(string $documentId): void
-    {
-        $this->documentId = $documentId;
-    }
-
     public function getDateRequested(): DateTimeImmutable
     {
         return $this->dateRequested;
-    }
-
-    public function setDateRequested(DateTimeImmutable $dateRequested): void
-    {
-        $this->dateRequested = $dateRequested;
     }
 
     /**
