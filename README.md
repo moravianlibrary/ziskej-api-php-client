@@ -18,6 +18,6 @@
 ```
 
 ```
-composer require php-http/guzzle6-adapter moravianlibrary/ziskej-api-php-client
+composer require moravianlibrary/ziskej-api-php-client
 ```
 
