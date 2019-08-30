@@ -29,14 +29,14 @@ final class Api
      * POST /login
      *
      * @param string $username
-     * @param string $passeord
+     * @param string $password
      * @return string
      *
      * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiException
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function login(string $username, string $passeord): string
+    public function login(string $username, string $password): string
     {
         $response = $this->apiClient->sendRequest(
             new RequestObject(
@@ -46,7 +46,7 @@ final class Api
                 [],
                 [
                     'username' => $username,
-                    'password' => $passeord,
+                    'password' => $password,
                 ]
             )
         );
