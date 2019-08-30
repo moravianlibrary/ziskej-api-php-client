@@ -2,11 +2,6 @@
 
 namespace Mzk\ZiskejApi;
 
-use Mzk\ZiskejApi\RequestModel\Message;
-use Mzk\ZiskejApi\RequestModel\Messages;
-use Mzk\ZiskejApi\RequestModel\Reader;
-use Mzk\ZiskejApi\RequestModel\Ticket;
-
 final class Api
 {
 
@@ -75,6 +70,22 @@ final class Api
      */
 
     /**
+     * Get library by sigla
+     *
+     * @param string $sigla
+     * @return \Mzk\ZiskejApi\ResponseModel\Library|null
+     *
+     * @throws \Http\Client\Exception
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     */
+    public function getLibrary(string $sigla): ?ResponseModel\Library
+    {
+        return in_array($sigla, $this->getLibraries())
+            ? new ResponseModel\Library($sigla)
+            : null;
+    }
+
+    /**
      * List all libraries
      * GET /libraries
      *
@@ -117,13 +128,12 @@ final class Api
      * GET /readers/:eppn
      *
      * @param string $eppn
-     * @param bool $advanced
-     * @return string[]
+     * @return \Mzk\ZiskejApi\ResponseModel\Reader|null
      *
      * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function getReader(string $eppn, bool $advanced = false): array
+    public function getReader(string $eppn): ?ResponseModel\Reader
     {
         $response = $this->apiClient->sendRequest(
             new RequestObject(
@@ -132,21 +142,23 @@ final class Api
                 [
                     ':eppn' => $eppn,
                 ],
-                $advanced ? ['expand' => 'status'] : []
+                [
+                    'expand' => 'status',
+                ]
             )
         );
 
         switch ($response->getStatusCode()) {
             case 200:
                 $contents = $response->getBody()->getContents();
-                $return = json_decode($contents, true);
+                return ResponseModel\Reader::fromArray(json_decode($contents, true));
                 break;
+            case 404:
+                return null;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($response);
                 break;
         }
-
-        return $return;
     }
 
 
@@ -156,13 +168,13 @@ final class Api
      *
      * @param string $eppn
      * @param \Mzk\ZiskejApi\RequestModel\Reader $reader
-     * @return string[]
+     * @return \Mzk\ZiskejApi\ResponseModel\Reader|null
      *
      * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiInputException
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function putReader(string $eppn, Reader $reader): array
+    public function putReader(string $eppn, RequestModel\Reader $reader): ?ResponseModel\Reader
     {
         $response = $this->apiClient->sendRequest(
             new RequestObject(
@@ -180,8 +192,7 @@ final class Api
             case 200:
             case 201:
             case 204:
-                $contents = $response->getBody()->getContents();
-                $return = json_decode($contents, true);
+                return $this->getReader($eppn);
                 break;
             case 422:
                 // Library is not active
@@ -196,8 +207,6 @@ final class Api
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($response);
                 break;
         }
-
-        return (array)$return;
     }
 
     /*
@@ -295,7 +304,7 @@ final class Api
      * @throws \Mzk\ZiskejApi\Exception\ApiException
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function createTicket(string $eppn, Ticket $ticket): string
+    public function createTicket(string $eppn, RequestModel\Ticket $ticket): string
     {
         $response = $this->apiClient->sendRequest(
             new RequestObject(
@@ -423,7 +432,7 @@ final class Api
      * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function createMessage(string $eppn, string $ticket_id, Message $message): array
+    public function createMessage(string $eppn, string $ticket_id, RequestModel\Message $message): array
     {
         $response = $this->apiClient->sendRequest(
             new RequestObject(
@@ -463,7 +472,7 @@ final class Api
      * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function readMessages(string $eppn, string $ticket_id, Messages $messages): array
+    public function readMessages(string $eppn, string $ticket_id, RequestModel\Messages $messages): array
     {
         $response = $this->apiClient->sendRequest(
             new RequestObject(

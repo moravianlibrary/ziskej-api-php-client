@@ -5,20 +5,28 @@ namespace Mzk\ZiskejApi;
 use DateTimeImmutable;
 use Http\Message\Authentication\Bearer;
 use Monolog\Logger;
-use Mzk\ZiskejApi\RequestModel\Message;
-use Mzk\ZiskejApi\RequestModel\Messages;
-use Mzk\ZiskejApi\RequestModel\Reader;
-use Mzk\ZiskejApi\RequestModel\Ticket;
 use Symfony\Component\Dotenv\Dotenv;
 
 final class ApiTest extends TestCase
 {
 
     /**
-     * Test reader eppn
+     * Test eppn of active reader
      * @var string
      */
-    private $eppn = '1185@mzk.cz';
+    private $eppnActive = '1185@mzk.cz';
+
+    /**
+     * Test eppn of nonexistent reader
+     * @var string
+     */
+    private $eppnNotExists = '0@mzk.cz';
+
+    /**
+     * Test eppn of dDeactivated reader
+     * @var string
+     */
+    private $eppnDeactivated = '1184@mzk.cz';
 
     /**
      * Document id
@@ -96,6 +104,26 @@ final class ApiTest extends TestCase
      * LIBRARIES
      */
 
+    public function testApiGetLibrary(): void
+    {
+        $apiClient = new ApiClient(null, $this->logger);
+        $api = new Api($apiClient);
+
+        $library = $api->getLibrary('BOA001');
+
+        $this->assertInstanceOf(ResponseModel\Library::class, $library);
+    }
+
+    public function testApiGetLibraryNull(): void
+    {
+        $apiClient = new ApiClient(null, $this->logger);
+        $api = new Api($apiClient);
+
+        $library = $api->getLibrary('XYZ001');
+
+        $this->assertNull($library);
+    }
+
     public function testApiGetLibraries(): void
     {
         $apiClient = new ApiClient(null, $this->logger);
@@ -111,46 +139,98 @@ final class ApiTest extends TestCase
      * READERS
      */
 
+    public function testApiIsReaderTrue(): void
+    {
+        $api = ApiFactory::createApi();
+
+        $reader = $api->getReader($this->eppnActive);
+
+        $this->assertInstanceOf(ResponseModel\Reader::class, $reader);
+    }
+
+    public function testApiIsReaderTrueDeactivated(): void
+    {
+        $this->expectExceptionCode(422);
+
+        $api = ApiFactory::createApi();
+
+        $reader = $api->getReader($this->eppnDeactivated);
+
+        //@todo melo by fungovat az opravi api
+        $this->assertInstanceOf(ResponseModel\Reader::class, $reader);
+    }
+
+    public function testApiIsReaderFalse(): void
+    {
+        $api = ApiFactory::createApi();
+
+        $reader = $api->getReader($this->eppnNotExists);
+
+        $this->assertNull($reader);
+    }
+
+
+    public function testApiIsReaderActiveTrue(): void
+    {
+        $api = ApiFactory::createApi();
+
+        $reader = $api->getReader($this->eppnActive);
+
+        if ($reader) {
+            $this->assertTrue($reader->isActive());
+        } else {
+            $this->assertNull($reader);
+        }
+    }
+
+    //@todo testApiIsReaderActiveFalse
+
     public function testApiGetReader200(): void
     {
         $api = ApiFactory::createApi();
 
-        $output = $api->getReader($this->eppn);
+        $reader = $api->getReader($this->eppnActive);
 
-        $this->assertIsArray($output);
-        $this->assertNotEmpty($output);
-        $this->assertCount(9, $output);
+        $this->assertInstanceOf(ResponseModel\Reader::class, $reader);
     }
 
-    public function testApiGetReader200Advanced(): void
-    {
-        $api = ApiFactory::createApi();
-
-        $output = $api->getReader($this->eppn, true);
-
-        $this->assertIsArray($output);
-        $this->assertNotEmpty($output);
-        $this->assertCount(13, $output);
-    }
-
-    public function testApiGetReader401(): void
+    public function testApiGetReader401Unauthorized(): void
     {
         $this->expectException(\Mzk\ZiskejApi\Exception\ApiResponseException::class);
         $this->expectExceptionCode(401);
 
         $api = new Api(new ApiClient(new Bearer($this->tokenWrong), $this->logger));
 
-        $output = $api->getReader($this->eppn);
+        $reader = $api->getReader($this->eppnActive);
 
-        $this->assertIsArray($output);
-        $this->assertEmpty($output);
+        $this->assertInstanceOf(ResponseModel\Reader::class, $reader);
     }
+
+    public function testApiGetReader404NotFound(): void
+    {
+        $api = ApiFactory::createApi();
+
+        $reader = $api->getReader($this->eppnNotExists);
+
+        $this->assertNull($reader);
+    }
+
+    public function testApiGetReader422DeactivatedReader(): void
+    {
+        $this->expectException(\Mzk\ZiskejApi\Exception\ApiResponseException::class);
+        $this->expectExceptionCode(422);
+
+        $api = ApiFactory::createApi();
+
+        $api->getReader($this->eppnDeactivated);
+    }
+
 
     public function testApiPutReader200(): void
     {
         $api = ApiFactory::createApi();
 
-        $reader = new Reader(
+        $inputReader = new RequestModel\Reader(
             'Jakub',
             'Novák',
             'jakub.novak@example.com',
@@ -159,17 +239,22 @@ final class ApiTest extends TestCase
             true
         );
 
-        $output = $api->putReader($this->eppn, $reader);
+        $outputReader = $api->putReader($this->eppnActive, $inputReader);
 
-        $this->assertIsArray($output);
-        $this->assertSame($reader->getEmail(), $output['email']);
-        $this->assertSame($reader->getFirstName(), $output['first_name']);
-        $this->assertSame($reader->getLastName(), $output['last_name']);
-        $this->assertSame($reader->isGdprData(), $output['is_gdpr_data']);
-        $this->assertSame($reader->isGdprReg(), $output['is_gdpr_reg']);
-        $this->assertSame($reader->isNotificationEnabled(), $output['notification_enabled']);
-        $this->assertSame($reader->getSigla(), $output['sigla']);
-        $this->assertIsString($output['reader_id']);
+        if ($outputReader) {
+            $this->assertInstanceOf(ResponseModel\Reader::class, $outputReader);
+            $this->assertIsString($outputReader->getReaderId());
+
+            $this->assertSame($inputReader->getEmail(), $outputReader->getEmail());
+            $this->assertSame($inputReader->getFirstName(), $outputReader->getFirstName());
+            $this->assertSame($inputReader->getLastName(), $outputReader->getLastName());
+            $this->assertSame($inputReader->isGdprData(), $outputReader->isGdprData());
+            $this->assertSame($inputReader->isGdprReg(), $outputReader->isGdprReg());
+            $this->assertSame($inputReader->isNotificationEnabled(), $outputReader->isNotificationEnabled());
+            $this->assertSame($inputReader->getSigla(), $outputReader->getSigla());
+        } else {
+            $this->assertNull($outputReader);
+        }
     }
 
     public function testApiPutReader422(): void
@@ -179,7 +264,7 @@ final class ApiTest extends TestCase
 
         $api = ApiFactory::createApi();
 
-        $reader = new Reader(
+        $reader = new RequestModel\Reader(
             'Jakub',
             'Novák',
             'jakub.novak@example.com',
@@ -188,7 +273,7 @@ final class ApiTest extends TestCase
             true
         );
 
-        $output = $api->putReader($this->eppn, $reader);
+        $output = $api->putReader($this->eppnActive, $reader);
 
         $this->assertIsArray($output);
         $this->assertEmpty($output);
@@ -203,7 +288,7 @@ final class ApiTest extends TestCase
         $apiClient = new ApiClient($authentication, $this->logger);
         $api = new Api($apiClient);
 
-        $reader = new Reader(
+        $reader = new RequestModel\Reader(
             'Jakub',
             'Novák',
             'jakub.novak@example.com',
@@ -212,7 +297,7 @@ final class ApiTest extends TestCase
             true
         );
 
-        $output = $api->putReader($this->eppn, $reader);    //@todo
+        $output = $api->putReader($this->eppnActive, $reader);    //@todo
 
         $this->assertIsArray($output);
         $this->assertEmpty($output);
@@ -226,7 +311,7 @@ final class ApiTest extends TestCase
     {
         $api = ApiFactory::createApi();
 
-        $output = $api->getTicketsList($this->eppn);
+        $output = $api->getTicketsList($this->eppnActive);
 
         $this->assertIsArray($output);
     }
@@ -235,7 +320,7 @@ final class ApiTest extends TestCase
     {
         $api = ApiFactory::createApi();
 
-        $output = $api->getTicketsDetails($this->eppn);
+        $output = $api->getTicketsDetails($this->eppnActive);
 
         $this->assertIsArray($output);
     }
@@ -244,12 +329,12 @@ final class ApiTest extends TestCase
     {
         $api = ApiFactory::createApi();
 
-        $ticket = new Ticket(
+        $ticket = new RequestModel\Ticket(
             $this->docId,
             new DateTimeImmutable($this->date)
         );
 
-        $output = $api->createTicket($this->eppn, $ticket);
+        $output = $api->createTicket($this->eppnActive, $ticket);
 
         $this->assertIsString($output);
     }
@@ -258,7 +343,7 @@ final class ApiTest extends TestCase
     {
         $api = ApiFactory::createApi();
 
-        $ticket = new Ticket(
+        $ticket = new RequestModel\Ticket(
             $this->docId,
             new DateTimeImmutable($this->date)
         );
@@ -266,7 +351,7 @@ final class ApiTest extends TestCase
         $ticket->setNote($this->note);
         $ticket->setDocumentAltIds($this->docAltIds);
 
-        $output = $api->createTicket($this->eppn, $ticket);
+        $output = $api->createTicket($this->eppnActive, $ticket);
 
         $this->assertIsString($output);
     }
@@ -275,7 +360,7 @@ final class ApiTest extends TestCase
     {
         $api = ApiFactory::createApi();
 
-        $output = $api->getTicket($this->eppn, $this->ticketId);
+        $output = $api->getTicket($this->eppnActive, $this->ticketId);
 
         $this->assertIsArray($output);
     }
@@ -288,7 +373,7 @@ final class ApiTest extends TestCase
     {
         $api = ApiFactory::createApi();
 
-        $output = $api->getMessages($this->eppn, $this->ticketId);
+        $output = $api->getMessages($this->eppnActive, $this->ticketId);
 
         $this->assertIsArray($output);
     }
@@ -297,9 +382,9 @@ final class ApiTest extends TestCase
     {
         $api = ApiFactory::createApi();
 
-        $message = new Message($this->messageText);
+        $message = new RequestModel\Message($this->messageText);
 
-        $output = $api->createMessage($this->eppn, $this->ticketId, $message);
+        $output = $api->createMessage($this->eppnActive, $this->ticketId, $message);
 
         $this->assertIsArray($output);
     }
@@ -308,9 +393,9 @@ final class ApiTest extends TestCase
     {
         $api = ApiFactory::createApi();
 
-        $messages = new Messages(true);
+        $messages = new RequestModel\Messages(true);
 
-        $output = $api->readMessages($this->eppn, $this->ticketId, $messages);
+        $output = $api->readMessages($this->eppnActive, $this->ticketId, $messages);
 
         $this->assertIsArray($output);
     }
