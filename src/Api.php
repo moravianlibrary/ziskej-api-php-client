@@ -161,6 +161,22 @@ final class Api
         }
     }
 
+    /**
+     * Create new reader
+     *
+     * @param string $eppn
+     * @param \Mzk\ZiskejApi\RequestModel\Reader $reader
+     * @return \Mzk\ZiskejApi\ResponseModel\Reader|null
+     *
+     * @throws \Http\Client\Exception
+     * @throws \Mzk\ZiskejApi\Exception\ApiInputException
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     */
+    public function createReader(string $eppn, RequestModel\Reader $reader): ?ResponseModel\Reader
+    {
+        return $this->updateReader($eppn, $reader);
+    }
+
 
     /**
      * Create or update reader
@@ -174,7 +190,7 @@ final class Api
      * @throws \Mzk\ZiskejApi\Exception\ApiInputException
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function putReader(string $eppn, RequestModel\Reader $reader): ?ResponseModel\Reader
+    public function updateReader(string $eppn, RequestModel\Reader $reader): ?ResponseModel\Reader
     {
         $response = $this->apiClient->sendRequest(
             new RequestObject(

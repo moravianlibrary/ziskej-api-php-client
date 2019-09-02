@@ -174,7 +174,6 @@ final class ApiTest extends TestCase
         $this->assertNull($reader);
     }
 
-
     public function testApiIsReaderActiveTrue(): void
     {
         $api = ApiFactory::createApi();
@@ -188,7 +187,6 @@ final class ApiTest extends TestCase
         }
     }
 
-    //@todo testApiIsReaderActiveFalse
 
     public function testApiGetReader200(): void
     {
@@ -238,7 +236,7 @@ final class ApiTest extends TestCase
     }
 
 
-    public function testApiPutReader200(): void
+    public function testApiCreateReader200(): void
     {
         $api = ApiFactory::createApi();
 
@@ -251,7 +249,7 @@ final class ApiTest extends TestCase
             true
         );
 
-        $outputReader = $api->putReader($this->eppnActive, $inputReader);
+        $outputReader = $api->createReader($this->eppnActive, $inputReader);
 
         if ($outputReader) {
             $this->assertInstanceOf(ResponseModel\Reader::class, $outputReader);
@@ -269,7 +267,7 @@ final class ApiTest extends TestCase
         }
     }
 
-    public function testApiPutReader422(): void
+    public function testApiCreateReader422(): void
     {
         $this->expectException(\Mzk\ZiskejApi\Exception\ApiInputException::class);
         $this->expectExceptionCode(422);
@@ -285,13 +283,13 @@ final class ApiTest extends TestCase
             true
         );
 
-        $output = $api->putReader($this->eppnActive, $reader);
+        $output = $api->createReader($this->eppnActive, $reader);
 
         $this->assertIsArray($output);
         $this->assertEmpty($output);
     }
 
-    public function testApiPutReader401(): void
+    public function testApiCreateReader401(): void
     {
         $this->expectException(\Mzk\ZiskejApi\Exception\ApiResponseException::class);
         $this->expectExceptionCode(401);
@@ -309,7 +307,85 @@ final class ApiTest extends TestCase
             true
         );
 
-        $output = $api->putReader($this->eppnActive, $reader);    //@todo
+        $output = $api->createReader($this->eppnActive, $reader);    //@todo
+
+        $this->assertIsArray($output);
+        $this->assertEmpty($output);
+    }
+
+
+    public function testApiUpdateReader200(): void
+    {
+        $api = ApiFactory::createApi();
+
+        $inputReader = new RequestModel\Reader(
+            'Jakub',
+            'Novák',
+            'jakub.novak@example.com',
+            'BOA001',
+            true,
+            true
+        );
+
+        $outputReader = $api->updateReader($this->eppnActive, $inputReader);
+
+        if ($outputReader) {
+            $this->assertInstanceOf(ResponseModel\Reader::class, $outputReader);
+            $this->assertIsString($outputReader->getReaderId());
+
+            $this->assertSame($inputReader->getEmail(), $outputReader->getEmail());
+            $this->assertSame($inputReader->getFirstName(), $outputReader->getFirstName());
+            $this->assertSame($inputReader->getLastName(), $outputReader->getLastName());
+            $this->assertSame($inputReader->isGdprData(), $outputReader->isGdprData());
+            $this->assertSame($inputReader->isGdprReg(), $outputReader->isGdprReg());
+            $this->assertSame($inputReader->isNotificationEnabled(), $outputReader->isNotificationEnabled());
+            $this->assertSame($inputReader->getSigla(), $outputReader->getSigla());
+        } else {
+            $this->assertNull($outputReader);
+        }
+    }
+
+    public function testApiUpdateReader422(): void
+    {
+        $this->expectException(\Mzk\ZiskejApi\Exception\ApiInputException::class);
+        $this->expectExceptionCode(422);
+
+        $api = ApiFactory::createApi();
+
+        $reader = new RequestModel\Reader(
+            'Jakub',
+            'Novák',
+            'jakub.novak@example.com',
+            'XXX001',
+            true,
+            true
+        );
+
+        $output = $api->updateReader($this->eppnActive, $reader);
+
+        $this->assertIsArray($output);
+        $this->assertEmpty($output);
+    }
+
+    public function testApiUpdateReader401(): void
+    {
+        $this->expectException(\Mzk\ZiskejApi\Exception\ApiResponseException::class);
+        $this->expectExceptionCode(401);
+
+        $authentication = new Bearer($this->tokenWrong);
+        $apiClient = new ApiClient($authentication, $this->logger);
+        $api = new Api($apiClient);
+
+        $reader = new RequestModel\Reader(
+            'Jakub',
+            'Novák',
+            'jakub.novak@example.com',
+            'BOA001',
+            true,
+            true
+        );
+
+        $output = $api->updateReader($this->eppnActive, $reader);    //@todo
 
         $this->assertIsArray($output);
         $this->assertEmpty($output);
