@@ -146,18 +146,23 @@ final class ApiTest extends TestCase
         $reader = $api->getReader($this->eppnActive);
 
         $this->assertInstanceOf(ResponseModel\Reader::class, $reader);
+
+        if ($reader) {
+            $this->assertSame(true, $reader->isActive());
+        }
     }
 
     public function testApiIsReaderTrueDeactivated(): void
     {
-        $this->expectExceptionCode(422);
-
         $api = ApiFactory::createApi();
 
         $reader = $api->getReader($this->eppnDeactivated);
 
-        //@todo melo by fungovat az opravi api
         $this->assertInstanceOf(ResponseModel\Reader::class, $reader);
+
+        if ($reader) {
+            $this->assertSame(false, $reader->isActive());
+        }
     }
 
     public function testApiIsReaderFalse(): void
@@ -192,6 +197,10 @@ final class ApiTest extends TestCase
         $reader = $api->getReader($this->eppnActive);
 
         $this->assertInstanceOf(ResponseModel\Reader::class, $reader);
+
+        if ($reader) {
+            $this->assertSame(true, $reader->isActive());
+        }
     }
 
     public function testApiGetReader401Unauthorized(): void
@@ -217,12 +226,15 @@ final class ApiTest extends TestCase
 
     public function testApiGetReader422DeactivatedReader(): void
     {
-        $this->expectException(\Mzk\ZiskejApi\Exception\ApiResponseException::class);
-        $this->expectExceptionCode(422);
-
         $api = ApiFactory::createApi();
 
-        $api->getReader($this->eppnDeactivated);
+        $reader = $api->getReader($this->eppnDeactivated);
+
+        $this->assertInstanceOf(ResponseModel\Reader::class, $reader);
+
+        if ($reader) {
+            $this->assertSame(false, $reader->isActive());
+        }
     }
 
 
