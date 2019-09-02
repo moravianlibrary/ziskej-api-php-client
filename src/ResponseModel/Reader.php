@@ -13,11 +13,11 @@ class Reader
     private $readerId;
 
     /**
-     * Is able to use Ziskej
+     * Active in Ziskej
      *
-     * @var bool|null
+     * @var bool
      */
-    private $isActive = null;
+    private $isActive;
 
     /**
      * Firstname
@@ -97,10 +97,12 @@ class Reader
 
     public function __construct(
         string $reader_id,
+        bool $isActive,
         bool $is_gdpr_reg,
         bool $is_gdpr_data
     ) {
         $this->readerId = $reader_id;
+        $this->isActive = $isActive;
         $this->isGdprReg = $is_gdpr_reg;
         $this->isGdprData = $is_gdpr_data;
     }
@@ -114,11 +116,11 @@ class Reader
     {
         $model = new self(
             (string)$input['reader_id'],
+            (bool)$input['is_active'],
             (bool)$input['is_gdpr_reg'],
             (bool)$input['is_gdpr_data']
         );
 
-        $model->isActive = !empty($input['is_active']) ? (bool)$input['is_active'] : null;
         $model->firstName = !empty($input['first_name']) ? (string)$input['first_name'] : null;
         $model->lastName = !empty($input['last_name']) ? (string)$input['last_name'] : null;
         $model->email = !empty($input['email']) ? (string)$input['email'] : null;
@@ -139,7 +141,7 @@ class Reader
         return $this->readerId;
     }
 
-    public function isActive(): ?bool
+    public function isActive(): bool
     {
         return $this->isActive;
     }

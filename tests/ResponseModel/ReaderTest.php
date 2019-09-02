@@ -9,8 +9,9 @@ final class ReaderTest extends TestCase
 
     public function testCreate(): void
     {
-        $reader = new Reader('ID12345', true, true);
+        $reader = new Reader('ID12345', true, true, true);
         $this->assertSame('ID12345', $reader->getReaderId());
+        $this->assertSame(true, $reader->isActive());
         $this->assertSame(true, $reader->isGdprReg());
         $this->assertSame(true, $reader->isGdprData());
     }
@@ -19,6 +20,7 @@ final class ReaderTest extends TestCase
     {
         $array = [
             'reader_id' => 'ID12345',
+            'is_active' => true,
             'is_gdpr_reg' => true,
             'is_gdpr_data' => true,
         ];
@@ -28,6 +30,7 @@ final class ReaderTest extends TestCase
         $this->assertInstanceOf(Reader::class, $reader);
 
         $this->assertSame($array['reader_id'], $reader->getReaderId());
+        $this->assertSame($array['is_active'], $reader->isActive());
         $this->assertSame($array['is_gdpr_reg'], $reader->isGdprReg());
         $this->assertSame($array['is_gdpr_data'], $reader->isGdprData());
     }
