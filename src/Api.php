@@ -488,7 +488,7 @@ final class Api
      * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function readMessages(string $eppn, string $ticket_id, RequestModel\Messages $messages): array
+    public function updateMessages(string $eppn, string $ticket_id, RequestModel\Messages $messages): array
     {
         $response = $this->apiClient->sendRequest(
             new RequestObject(

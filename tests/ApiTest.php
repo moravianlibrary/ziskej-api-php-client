@@ -483,7 +483,7 @@ final class ApiTest extends TestCase
 
         $messages = new RequestModel\Messages(true);
 
-        $output = $api->readMessages($this->eppnActive, $this->ticketId, $messages);
+        $output = $api->updateMessages($this->eppnActive, $this->ticketId, $messages);
 
         $this->assertIsArray($output);
     }
