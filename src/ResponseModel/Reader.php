@@ -96,15 +96,15 @@ class Reader
     private $countMessagesUnread = null;
 
     public function __construct(
-        string $reader_id,
+        string $readerId,
         bool $isActive,
-        bool $is_gdpr_reg,
-        bool $is_gdpr_data
+        bool $isGdprReg,
+        bool $isGdprData
     ) {
-        $this->readerId = $reader_id;
+        $this->readerId = $readerId;
         $this->isActive = $isActive;
-        $this->isGdprReg = $is_gdpr_reg;
-        $this->isGdprData = $is_gdpr_data;
+        $this->isGdprReg = $isGdprReg;
+        $this->isGdprData = $isGdprData;
     }
 
 
