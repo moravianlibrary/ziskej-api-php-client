@@ -417,10 +417,7 @@ final class ApiTest extends TestCase
     {
         $api = ApiFactory::createApi();
 
-        $ticket = new RequestModel\Ticket(
-            $this->docId,
-            new DateTimeImmutable($this->date)
-        );
+        $ticket = new RequestModel\Ticket($this->docId);
 
         $output = $api->createTicket($this->eppnActive, $ticket);
 
@@ -431,11 +428,9 @@ final class ApiTest extends TestCase
     {
         $api = ApiFactory::createApi();
 
-        $ticket = new RequestModel\Ticket(
-            $this->docId,
-            new DateTimeImmutable($this->date)
-        );
+        $ticket = new RequestModel\Ticket($this->docId);
 
+        $ticket->setDateRequested(new DateTimeImmutable($this->date));
         $ticket->setNote($this->note);
         $ticket->setDocumentAltIds($this->docAltIds);
 

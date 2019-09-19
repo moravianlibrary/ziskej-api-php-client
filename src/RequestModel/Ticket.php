@@ -15,9 +15,9 @@ class Ticket
 
     /**
      * Requested date
-     * @var \DateTimeImmutable
+     * @var \DateTimeImmutable|null
      */
-    private $dateRequested;
+    private $dateRequested = null;
 
     /**
      * Alternative document IDs
@@ -35,14 +35,11 @@ class Ticket
      * Ticket constructor.
      *
      * @param string $documentId
-     *
-     * @param \DateTimeImmutable $dateRequested
      */
-    public function __construct(string $documentId, DateTimeImmutable $dateRequested)
+    public function __construct(string $documentId)
     {
         //@todo accept $dateRequested min today + 3 working days
         $this->documentId = $documentId;
-        $this->dateRequested = $dateRequested;
     }
 
     /**
@@ -53,8 +50,11 @@ class Ticket
         $return = [
             'ticket_type' => 'mvs',
             'doc_id' => $this->documentId,
-            'date_requested' => $this->dateRequested->format('Y-m-d'),
         ];
+
+        if (!empty($this->dateRequested)) {
+            $return['date_requested'] = $this->dateRequested->format('Y-m-d');
+        }
 
         if (!empty($this->documentAltIds)) {
             $return['doc_alt_ids'] = $this->documentAltIds;
@@ -72,9 +72,14 @@ class Ticket
         return $this->documentId;
     }
 
-    public function getDateRequested(): DateTimeImmutable
+    public function getDateRequested(): ?DateTimeImmutable
     {
         return $this->dateRequested;
+    }
+
+    public function setDateRequested(?DateTimeImmutable $dateRequested): void
+    {
+        $this->dateRequested = $dateRequested;
     }
 
     /**
