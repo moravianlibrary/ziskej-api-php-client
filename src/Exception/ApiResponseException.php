@@ -2,20 +2,20 @@
 
 namespace Mzk\ZiskejApi\Exception;
 
-use Psr\Http\Message\ResponseInterface;
+use Mzk\ZiskejApi\ApiResponse;
 
 class ApiResponseException extends \Exception
 {
 
-    public function __construct(ResponseInterface $response)
+    public function __construct(ApiResponse $apiResponse)
     {
         parent::__construct(
             sprintf(
                 'Ziskej API response error: "%d %s"',
-                $response->getStatusCode(),
-                $response->getReasonPhrase()
+                $apiResponse->getStatusCode(),
+                $apiResponse->getReasonPhrase()
             ),
-            $response->getStatusCode(),
+            $apiResponse->getStatusCode(),
             parent::getPrevious()
         );
         //@todo log this exception

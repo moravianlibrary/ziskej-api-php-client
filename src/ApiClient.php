@@ -13,7 +13,6 @@ use Http\Discovery\UriFactoryDiscovery;
 use Http\Message\Authentication;
 use Http\Message\Formatter\FullHttpMessageFormatter;
 use Http\Message\MultipartStream\MultipartStreamBuilder;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use function GuzzleHttp\Psr7\stream_for;
 
@@ -72,13 +71,14 @@ final class ApiClient
     }
 
     /**
-     * Send HTTP request and get response
+     * Send ApiRequest and get ApiResponse
      *
-     * @param \Mzk\ZiskejApi\RequestObject $requestObject
-     * @return \Psr\Http\Message\ResponseInterface
+     * @param \Mzk\ZiskejApi\ApiRequest $requestObject
+     * @return \Mzk\ZiskejApi\ApiResponse
+     *
      * @throws \Http\Client\Exception
      */
-    public function sendRequest(RequestObject $requestObject): ResponseInterface
+    public function sendApiRequest(ApiRequest $requestObject): ApiResponse
     {
         $messageFactory = MessageFactoryDiscovery::find();
 
@@ -118,7 +118,9 @@ final class ApiClient
             $body
         );
 
-        return $this->client->sendRequest($request);
+        $response = $this->client->sendRequest($request);
+        
+        return new ApiResponse($response);
     }
 
 }

@@ -2,7 +2,7 @@
 
 namespace Mzk\ZiskejApi;
 
-class RequestObject
+class ApiRequest
 {
 
     /**
