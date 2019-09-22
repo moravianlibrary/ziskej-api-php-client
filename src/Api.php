@@ -360,13 +360,13 @@ final class Api
      * GET /readers/:eppn/tickets/:ticket_id
      *
      * @param string $eppn
-     * @param string $ticket_id
+     * @param string $ticketId
      * @return string[] Ticket details
      *
      * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function getTicket(string $eppn, string $ticket_id): array
+    public function getTicket(string $eppn, string $ticketId): array
     {
         $apiResponse = $this->apiClient->sendApiRequest(
             new ApiRequest(
@@ -374,7 +374,7 @@ final class Api
                 '/readers/:eppn/tickets/:ticket_id',
                 [
                     ':eppn' => $eppn,
-                    ':ticket_id' => $ticket_id,
+                    ':ticket_id' => $ticketId,
                 ]
             )
         );
@@ -402,13 +402,13 @@ final class Api
      * Get notes for order
      *
      * @param string $eppn
-     * @param string $ticket_id
+     * @param string $ticketId
      * @return string[][]
      *
      * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function getMessages(string $eppn, string $ticket_id): array
+    public function getMessages(string $eppn, string $ticketId): array
     {
         $apiResponse = $this->apiClient->sendApiRequest(
             new ApiRequest(
@@ -416,7 +416,7 @@ final class Api
                 '/readers/:eppn/tickets/:ticket_id/messages',
                 [
                     ':eppn' => $eppn,
-                    ':ticket_id' => $ticket_id,
+                    ':ticket_id' => $ticketId,
                 ]
             )
         );
@@ -441,14 +441,14 @@ final class Api
      * Create new note to order
      *
      * @param string $eppn
-     * @param string $ticket_id
+     * @param string $ticketId
      * @param \Mzk\ZiskejApi\RequestModel\Message $message
      * @return string[]
      *
      * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function createMessage(string $eppn, string $ticket_id, RequestModel\Message $message): array
+    public function createMessage(string $eppn, string $ticketId, RequestModel\Message $message): array
     {
         $apiResponse = $this->apiClient->sendApiRequest(
             new ApiRequest(
@@ -456,7 +456,7 @@ final class Api
                 '/readers/:eppn/tickets/:ticket_id/messages',
                 [
                     ':eppn' => $eppn,
-                    ':ticket_id' => $ticket_id,
+                    ':ticket_id' => $ticketId,
                 ],
                 [],
                 $message->toArray()
@@ -481,14 +481,14 @@ final class Api
      * Set messages as read
      *
      * @param string $eppn
-     * @param string $ticket_id
+     * @param string $ticketId
      * @param \Mzk\ZiskejApi\RequestModel\Messages $messages
      * @return string[]
      *
      * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function updateMessages(string $eppn, string $ticket_id, RequestModel\Messages $messages): array
+    public function updateMessages(string $eppn, string $ticketId, RequestModel\Messages $messages): array
     {
         $apiResponse = $this->apiClient->sendApiRequest(
             new ApiRequest(
@@ -496,7 +496,7 @@ final class Api
                 '/readers/:eppn/tickets/:ticket_id/messages',
                 [
                     ':eppn' => $eppn,
-                    ':ticket_id' => $ticket_id,
+                    ':ticket_id' => $ticketId,
                 ],
                 [],
                 $messages->toArray()
