@@ -11,6 +11,12 @@ final class ApiTest extends TestCase
 {
 
     /**
+     * Test base url
+     *
+     * @var string
+     */
+    private $baseUrl = 'https://ziskej-test.techlib.cz:9080/api/v1';
+    /**
      * Test eppn of active reader
      * @var string
      */
@@ -88,7 +94,7 @@ final class ApiTest extends TestCase
 
     public function testApiPostLogin(): void
     {
-        $apiClient = new ApiClient(null, $this->logger);
+        $apiClient = new ApiClient($this->baseUrl, null, $this->logger);
         $api = new Api($apiClient);
 
         $dotEnv = new Dotenv();
@@ -106,7 +112,7 @@ final class ApiTest extends TestCase
 
     public function testApiGetLibrary(): void
     {
-        $apiClient = new ApiClient(null, $this->logger);
+        $apiClient = new ApiClient($this->baseUrl, null, $this->logger);
         $api = new Api($apiClient);
 
         $library = $api->getLibrary('BOA001');
@@ -116,7 +122,7 @@ final class ApiTest extends TestCase
 
     public function testApiGetLibraryNull(): void
     {
-        $apiClient = new ApiClient(null, $this->logger);
+        $apiClient = new ApiClient($this->baseUrl, null, $this->logger);
         $api = new Api($apiClient);
 
         $library = $api->getLibrary('XYZ001');
@@ -126,7 +132,7 @@ final class ApiTest extends TestCase
 
     public function testApiGetLibraries(): void
     {
-        $apiClient = new ApiClient(null, $this->logger);
+        $apiClient = new ApiClient($this->baseUrl, null, $this->logger);
         $api = new Api($apiClient);
 
         $output = $api->getLibraries();
@@ -206,7 +212,7 @@ final class ApiTest extends TestCase
         $this->expectException(\Mzk\ZiskejApi\Exception\ApiResponseException::class);
         $this->expectExceptionCode(401);
 
-        $api = new Api(new ApiClient(new Bearer($this->tokenWrong), $this->logger));
+        $api = new Api(new ApiClient($this->baseUrl, new Bearer($this->tokenWrong), $this->logger));
 
         $reader = $api->getReader($this->eppnActive);
 
@@ -295,7 +301,7 @@ final class ApiTest extends TestCase
         $this->expectExceptionCode(401);
 
         $authentication = new Bearer($this->tokenWrong);
-        $apiClient = new ApiClient($authentication, $this->logger);
+        $apiClient = new ApiClient($this->baseUrl, $authentication, $this->logger);
         $api = new Api($apiClient);
 
         $reader = new RequestModel\Reader(
@@ -373,7 +379,7 @@ final class ApiTest extends TestCase
         $this->expectExceptionCode(401);
 
         $authentication = new Bearer($this->tokenWrong);
-        $apiClient = new ApiClient($authentication, $this->logger);
+        $apiClient = new ApiClient($this->baseUrl, $authentication, $this->logger);
         $api = new Api($apiClient);
 
         $reader = new RequestModel\Reader(

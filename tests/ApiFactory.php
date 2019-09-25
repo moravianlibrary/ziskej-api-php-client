@@ -13,6 +13,7 @@ class ApiFactory
     {
         $api = new Api(
             new ApiClient(
+                'https://ziskej-test.techlib.cz:9080/api/v1',
                 null,
                 new Logger('ZiskejApi')
             )
@@ -28,6 +29,7 @@ class ApiFactory
 
         return new Api(
             new ApiClient(
+                'https://ziskej-test.techlib.cz:9080/api/v1',
                 new Bearer($token),
                 new Logger('ZiskejApi')
             )

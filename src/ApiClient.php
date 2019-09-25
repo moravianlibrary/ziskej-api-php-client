@@ -22,9 +22,9 @@ final class ApiClient
     /**
      * Base URI of the client
      *
-     * @var string|\Psr\Http\Message\UriInterface
+     * @var string|\Psr\Http\Message\UriInterface|null
      */
-    private $baseUri = 'https://ziskej-test.techlib.cz:9080/api/v1';
+    private $baseUri = null;
 
     /**
      * @var \Http\Client\HttpClient
@@ -47,16 +47,20 @@ final class ApiClient
     private $plugins = [];
 
     public function __construct(
+        ?string $baseUri,
         ?Authentication $authentication,
         ?LoggerInterface $logger
     ) {
+        $this->baseUri = $baseUri;
         $this->authentication = $authentication;
         $this->logger = $logger;
 
         // set base uri
-        $this->plugins[] = new BaseUriPlugin(UriFactoryDiscovery::find()->createUri($this->baseUri), [
-            'replace' => true,
-        ]);
+        if ($this->baseUri) {
+            $this->plugins[] = new BaseUriPlugin(UriFactoryDiscovery::find()->createUri($this->baseUri), [
+                'replace' => true,
+            ]);
+        }
 
         if ($this->authentication) {
             $this->plugins[] = new AuthenticationPlugin($this->authentication);
@@ -119,7 +123,7 @@ final class ApiClient
         );
 
         $response = $this->client->sendRequest($request);
-        
+
         return new ApiResponse($response);
     }
 
