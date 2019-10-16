@@ -6,6 +6,7 @@ use Http\Client\Common\Plugin\AuthenticationPlugin;
 use Http\Client\Common\Plugin\BaseUriPlugin;
 use Http\Client\Common\Plugin\LoggerPlugin;
 use Http\Client\Common\PluginClient;
+use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Discovery\StreamFactoryDiscovery;
@@ -47,6 +48,7 @@ final class ApiClient
     private $plugins = [];
 
     public function __construct(
+        ?HttpClient $httpClient,
         ?string $baseUri,
         ?Authentication $authentication,
         ?LoggerInterface $logger
@@ -71,7 +73,10 @@ final class ApiClient
             $this->plugins[] = new LoggerPlugin($this->logger, $formater);
         }
 
-        $this->httpClient = new PluginClient(HttpClientDiscovery::find(), $this->plugins);
+        $this->httpClient = new PluginClient(
+            !empty($httpClient) ? $httpClient : HttpClientDiscovery::find(),
+            $this->plugins
+        );
     }
 
     /**
