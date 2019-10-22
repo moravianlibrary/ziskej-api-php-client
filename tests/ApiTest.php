@@ -459,6 +459,16 @@ final class ApiTest extends TestCase
         $this->assertIsArray($output);
     }
 
+    public function testApiDeleteTicket(): void
+    {
+        $api = ApiFactory::createApi();
+
+        $output = $api->deleteTicket($this->eppnActive, 'cbb99cf07eee401c');
+
+        //$this->assertIsArray($output);
+        $this->assertNull($output);
+    }
+
     /*
      * MESSAGES
      */

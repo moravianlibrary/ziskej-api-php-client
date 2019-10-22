@@ -394,6 +394,47 @@ final class Api
         return (array)$return;
     }
 
+    /**
+     * Delete ticket
+     * DELETE /readers/:eppn/tickets/:ticket_id
+     *
+     * @param string $eppn
+     * @param string $ticketId
+     * @return string[]|null Deleted ticket detail data or null if no ticket found
+     *
+     * @throws \Http\Client\Exception
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     */
+    public function deleteTicket(string $eppn, string $ticketId): ?array
+    {
+        $ticket = $this->getTicket($eppn, $ticketId);
+
+        $apiResponse = $this->apiClient->sendApiRequest(
+            new ApiRequest(
+                'DELETE',
+                '/readers/:eppn/tickets/:ticket_id',
+                [
+                    ':eppn' => $eppn,
+                    ':ticket_id' => $ticketId,
+                ]
+            )
+        );
+
+        switch ($apiResponse->getStatusCode()) {
+            case 200:
+                $return = (array)$ticket;
+                break;
+            case 422:
+                $return = null;
+                break;
+            default:
+                throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
+                break;
+        }
+
+        return $return;
+    }
+
     /*
      * MESSAGES
      */
