@@ -361,7 +361,7 @@ final class Api
      *
      * @param string $eppn
      * @param string $ticketId
-     * @return string[] Ticket details
+     * @return string[] Ticket detail data
      *
      * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
