@@ -279,7 +279,7 @@ final class Api
      * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function getTicketsDetails(string $eppn): TicketsCollection
+    public function getTickets(string $eppn): TicketsCollection
     {
         $apiResponse = $this->apiClient->sendApiRequest(
             new ApiRequest(

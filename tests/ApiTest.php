@@ -420,7 +420,7 @@ final class ApiTest extends TestCase
     {
         $api = ApiFactory::createApi();
 
-        $output = $api->getTicketsDetails($this->eppnActive);
+        $output = $api->getTickets($this->eppnActive);
 
         $this->assertInstanceOf(TicketsCollection::class, $output);
     }
