@@ -6,6 +6,7 @@ use DateTimeImmutable;
 use Http\Adapter\Guzzle6\Client;
 use Http\Message\Authentication\Bearer;
 use Monolog\Logger;
+use Mzk\ZiskejApi\ResponseModel\TicketsCollection;
 use Symfony\Component\Dotenv\Dotenv;
 
 final class ApiTest extends TestCase
@@ -421,7 +422,7 @@ final class ApiTest extends TestCase
 
         $output = $api->getTicketsDetails($this->eppnActive);
 
-        $this->assertIsArray($output);
+        $this->assertInstanceOf(TicketsCollection::class, $output);
     }
 
     public function testApiCreateTicket(): void

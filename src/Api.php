@@ -2,6 +2,8 @@
 
 namespace Mzk\ZiskejApi;
 
+use Mzk\ZiskejApi\ResponseModel\TicketsCollection;
+
 final class Api
 {
 
@@ -272,12 +274,12 @@ final class Api
      * GET /readers/:eppn/tickets
      *
      * @param string $eppn
-     * @return string[][] List of tickets with details
+     * @return \Mzk\ZiskejApi\ResponseModel\TicketsCollection List of tickets with details
      *
      * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function getTicketsDetails(string $eppn): array
+    public function getTicketsDetails(string $eppn): TicketsCollection
     {
         $apiResponse = $this->apiClient->sendApiRequest(
             new ApiRequest(
@@ -296,16 +298,19 @@ final class Api
             case 200:
                 $contents = $apiResponse->getBody()->getContents();
                 $array = json_decode($contents, true);
-                $return = isset($array['items']) && is_array($array['items'])
-                    ? $array['items']
-                    : [];
+
+                if (isset($array['items']) && is_array($array['items'])) {
+                    $tickets = TicketsCollection::fromArray($array['items']);
+                } else {
+                    $tickets = new TicketsCollection();
+                }
                 break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
                 break;
         }
 
-        return (array)$return;
+        return $tickets;
     }
 
     /**
