@@ -54,7 +54,7 @@ final class ApiTest extends TestCase
     /**
      * @var string
      */
-    private $ticketId = 'd2b76fb303764fc9';
+    private $ticketId = '31d0a0b8dbb74688';
 
     /**
      * @var string
@@ -420,7 +420,7 @@ final class ApiTest extends TestCase
     {
         $api = ApiFactory::createApi();
 
-        $output = $api->getTickets($this->eppnActive);
+        $output = $api->getTicketsDetails($this->eppnActive);
 
         $this->assertInstanceOf(TicketsCollection::class, $output);
     }
@@ -458,16 +458,6 @@ final class ApiTest extends TestCase
         $output = $api->getTicket($this->eppnActive, $this->ticketId);
 
         $this->assertIsArray($output);
-    }
-
-    public function testApiDeleteTicket(): void
-    {
-        $api = ApiFactory::createApi();
-
-        $output = $api->deleteTicket($this->eppnActive, 'cbb99cf07eee401c');
-
-        //$this->assertIsArray($output);
-        $this->assertNull($output);
     }
 
     /*

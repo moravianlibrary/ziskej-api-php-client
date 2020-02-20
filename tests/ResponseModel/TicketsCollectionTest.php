@@ -50,7 +50,8 @@ final class TicketsCollectionTest extends TestCase
     public function testCreateEmptyObject(): void
     {
         $ticketsCollection = new TicketsCollection();
-        $this->assertEquals([], $tickets = $ticketsCollection->getAll());
+        $tickets = $ticketsCollection->getAll();
+        $this->assertEquals([], $tickets);
     }
 
     public function testCreateFromArray(): void
