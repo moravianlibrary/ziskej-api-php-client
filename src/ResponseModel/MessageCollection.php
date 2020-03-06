@@ -2,6 +2,8 @@
 
 namespace Mzk\ZiskejApi\ResponseModel;
 
+use SmartEmailing\Types\Arrays;
+
 class MessageCollection
 {
 
@@ -11,14 +13,16 @@ class MessageCollection
     private $items = [];
 
     /**
-     * @param string[][] $array
+     * @param string[][] $data
      * @return \Mzk\ZiskejApi\ResponseModel\MessageCollection
      */
-    public static function fromArray(array $array): MessageCollection
+    public static function fromArray(array $data): MessageCollection
     {
         $self = new self();
-        foreach ($array as $subarray) {
-            $self->addMessage(Message::fromArray($subarray));
+        foreach ($data as $subarray) {
+            if (Arrays::getArrayOrNull($subarray, true)) {
+                $self->addMessage(Message::fromArray($subarray));
+            }
         }
         return $self;
     }
