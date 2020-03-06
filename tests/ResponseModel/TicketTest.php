@@ -2,8 +2,6 @@
 
 namespace Mzk\ZiskejApi\ResponseModel;
 
-use DateTimeImmutable;
-use DateTimeZone;
 use Mzk\ZiskejApi\TestCase;
 
 final class TicketTest extends TestCase
@@ -62,15 +60,11 @@ final class TicketTest extends TestCase
         $this->assertEquals($this->input['is_open'], $ticket->isOpen());
         $this->assertEquals($this->input['payment_id'], $ticket->getPaymentId());
         $this->assertEquals($this->input['payment_url'], $ticket->getPaymentUrl());
-        $this->assertEquals(
-            new DateTimeImmutable($this->input['date_created'], new DateTimeZone('UTC')),
-            $ticket->getDateCreated()
-        );
-        $this->assertEquals(
-            new DateTimeImmutable($this->input['date_requested'], new DateTimeZone('UTC')),
-            $ticket->getDateRequested()
-        );
+
+        $this->assertEquals($this->input['date_created'], $ticket->getDateCreated()->format('Y-m-d'));
+        $this->assertEquals($this->input['date_requested'], $ticket->getDateRequested()->format('Y-m-d'));
         $this->assertEquals($this->input['date_return'], null);
+
         $this->assertEquals($this->input['count_messages'], $ticket->getCountMessages());
         $this->assertEquals($this->input['count_messages_unread'], $ticket->getCountMessagesUnread());
     }
