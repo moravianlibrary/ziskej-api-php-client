@@ -509,9 +509,6 @@ final class Api
 
         switch ($apiResponse->getStatusCode()) {
             case 201:
-                $contents = $apiResponse->getBody()->getContents();
-                $array = json_decode($contents, true);
-                //@todo ask API to return created Message object
                 return true;
                 break;
             default:
@@ -548,8 +545,6 @@ final class Api
 
         switch ($apiResponse->getStatusCode()) {
             case 200:
-                $contents = $apiResponse->getBody()->getContents();
-                $array = json_decode($contents, true);
                 return true;
                 break;
             default:

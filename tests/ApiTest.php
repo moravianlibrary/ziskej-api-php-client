@@ -465,7 +465,6 @@ final class ApiTest extends TestCase
         if ($output) {
             $this->assertSame($this->ticketId, $output->getId());
         }
-
     }
 
     /*
