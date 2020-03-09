@@ -6,6 +6,7 @@ use SmartEmailing\Types\Arrays;
 
 class TicketsCollection
 {
+
     //@todo rename to TicketCollection
 
     /**
