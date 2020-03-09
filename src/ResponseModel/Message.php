@@ -3,8 +3,9 @@
 namespace Mzk\ZiskejApi\ResponseModel;
 
 use DateTimeImmutable;
-use SmartEmailing\Types\DatesImmutable;
+use SmartEmailing\Types\DateTimesImmutable;
 use SmartEmailing\Types\PrimitiveTypes;
+use function date;
 
 class Message
 {
@@ -38,7 +39,11 @@ class Message
     {
         $self = new self();
         $self->sender = PrimitiveTypes::extractString($data, 'sender');
-        $self->date = DatesImmutable::extract($data, 'date');
+        //$self->date = DatesImmutable::extract($data, 'date');
+        $self->date = DateTimesImmutable::from(date(
+            'Y-m-d H:i:s',
+            (int)strtotime((string)PrimitiveTypes::extractStringOrNull($data, 'date', true))
+        ));  // because of unspecific input format
         $self->read = !PrimitiveTypes::extractBool($data, 'unread');
         $self->text = PrimitiveTypes::extractString($data, 'text');
         return $self;
