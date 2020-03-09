@@ -4,6 +4,7 @@ namespace Mzk\ZiskejApi;
 
 use Mzk\ZiskejApi\ResponseModel\Library;
 use Mzk\ZiskejApi\ResponseModel\LibraryCollection;
+use Mzk\ZiskejApi\ResponseModel\Ticket;
 use Mzk\ZiskejApi\ResponseModel\TicketsCollection;
 
 final class Api
@@ -321,25 +322,24 @@ final class Api
      *
      * @param string $eppn
      * @param \Mzk\ZiskejApi\RequestModel\Ticket $ticket
-     * @return string
+     * @return \Mzk\ZiskejApi\ResponseModel\Ticket|null Created Ticket or null
      *
      * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiException
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function createTicket(string $eppn, RequestModel\Ticket $ticket): string
+    public function createTicket(string $eppn, RequestModel\Ticket $ticket): ?Ticket
     {
-        $apiResponse = $this->apiClient->sendApiRequest(
-            new ApiRequest(
-                'POST',
-                '/readers/:eppn/tickets',
-                [
-                    ':eppn' => $eppn,
-                ],
-                [],
-                $ticket->toArray()
-            )
+        $apiRequest = new ApiRequest(
+            'POST',
+            '/readers/:eppn/tickets',
+            [
+                ':eppn' => $eppn,
+            ],
+            [],
+            $ticket->toArray()
         );
+        $apiResponse = $this->apiClient->sendApiRequest($apiRequest);
 
         switch ($apiResponse->getStatusCode()) {
             //@todo api should return code 201, but return 200
@@ -347,19 +347,19 @@ final class Api
             case 201:
                 $contents = $apiResponse->getBody()->getContents();
                 $array = json_decode($contents, true);
+
                 if (empty($array['id'])) {
                     throw new \Mzk\ZiskejApi\Exception\ApiException(
                         'Ziskej API error: API did not return "id" parameter.'
                     );
                 }
-                $return = $array['id'];
+
+                return $this->getTicket($eppn, $array['id']);
                 break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
                 break;
         }
-
-        return (string)$return;
     }
 
     /**
@@ -368,12 +368,12 @@ final class Api
      *
      * @param string $eppn
      * @param string $ticketId
-     * @return string[] Ticket detail data
+     * @return \Mzk\ZiskejApi\ResponseModel\Ticket|null Ticket detail data or null
      *
      * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function getTicket(string $eppn, string $ticketId): array
+    public function getTicket(string $eppn, string $ticketId): ?Ticket
     {
         $apiResponse = $this->apiClient->sendApiRequest(
             new ApiRequest(
@@ -389,16 +389,14 @@ final class Api
         switch ($apiResponse->getStatusCode()) {
             case 200:
                 $contents = $apiResponse->getBody()->getContents();
-                $return = json_decode($contents, true);
+                return Ticket::fromArray(json_decode($contents, true));
                 break;
             case 404:
-                //@todo ticket not found
+                return null;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
                 break;
         }
-
-        return (array)$return;
     }
 
     /**

@@ -7,6 +7,7 @@ use Http\Adapter\Guzzle6\Client;
 use Http\Message\Authentication\Bearer;
 use Monolog\Logger;
 use Mzk\ZiskejApi\ResponseModel\LibraryCollection;
+use Mzk\ZiskejApi\ResponseModel\Ticket;
 use Mzk\ZiskejApi\ResponseModel\TicketsCollection;
 use Symfony\Component\Dotenv\Dotenv;
 
@@ -458,7 +459,12 @@ final class ApiTest extends TestCase
 
         $output = $api->getTicket($this->eppnActive, $this->ticketId);
 
-        $this->assertIsArray($output);
+        $this->assertInstanceOf(Ticket::class, $output);
+
+        if ($output) {
+            $this->assertSame($this->ticketId, $output->getId());
+        }
+
     }
 
     /*
