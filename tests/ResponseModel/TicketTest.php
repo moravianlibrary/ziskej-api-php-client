@@ -61,8 +61,14 @@ final class TicketTest extends TestCase
         $this->assertEquals($this->input['payment_id'], $ticket->getPaymentId());
         $this->assertEquals($this->input['payment_url'], $ticket->getPaymentUrl());
 
-        $this->assertEquals($this->input['date_created'], $ticket->getDateCreated()->format('Y-m-d'));
-        $this->assertEquals($this->input['date_requested'], $ticket->getDateRequested()->format('Y-m-d'));
+        if (!empty($ticket->getDateCreated())) {
+            $this->assertEquals($this->input['date_created'], $ticket->getDateCreated()->format('Y-m-d'));
+        }
+
+        if (!empty($ticket->getDateRequested())) {
+            $this->assertEquals($this->input['date_requested'], $ticket->getDateRequested()->format('Y-m-d'));
+        }
+
         $this->assertEquals($this->input['date_return'], null);
 
         $this->assertEquals($this->input['count_messages'], $ticket->getCountMessages());

@@ -13,7 +13,7 @@ final class MessagesCollectionTest extends TestCase
     private $input = [
         [
             "sender" => "reader",
-            "date" => "2019-01-23",
+            "date" => "24.1.2019 7:20",
             "unread" => false,
             "text" => "čistý text bez formátování s novými řádky typu unix",
         ],

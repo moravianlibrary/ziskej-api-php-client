@@ -59,7 +59,7 @@ final class TicketsCollectionTest extends TestCase
         $ticketsCollection = TicketsCollection::fromArray($this->input);
         $tickets = $ticketsCollection->getAll();
 
-        $this->assertCount(3, $tickets);
+        $this->assertCount(2, $tickets);
         //@todo more tests
     }
 
