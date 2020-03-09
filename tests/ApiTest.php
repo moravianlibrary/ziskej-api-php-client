@@ -6,6 +6,7 @@ use DateTimeImmutable;
 use Http\Adapter\Guzzle6\Client;
 use Http\Message\Authentication\Bearer;
 use Monolog\Logger;
+use Mzk\ZiskejApi\ResponseModel\LibraryCollection;
 use Mzk\ZiskejApi\ResponseModel\TicketsCollection;
 use Symfony\Component\Dotenv\Dotenv;
 
@@ -143,8 +144,8 @@ final class ApiTest extends TestCase
 
         $output = $api->getLibraries();
 
-        $this->assertIsArray($output);
-        $this->assertNotEmpty($output);
+        $this->assertInstanceOf(LibraryCollection::class, $output);
+        $this->assertNotEmpty($output->getAll());
     }
 
     /*

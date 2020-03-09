@@ -2,6 +2,8 @@
 
 namespace Mzk\ZiskejApi;
 
+use Mzk\ZiskejApi\ResponseModel\Library;
+use Mzk\ZiskejApi\ResponseModel\LibraryCollection;
 use Mzk\ZiskejApi\ResponseModel\TicketsCollection;
 
 final class Api
@@ -80,23 +82,22 @@ final class Api
      * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function getLibrary(string $sigla): ?ResponseModel\Library
+    public function getLibrary(string $sigla): ?Library
     {
-        return in_array($sigla, $this->getLibraries())
-            ? new ResponseModel\Library($sigla)
-            : null;
+        $libraries = $this->getLibraries();
+        return $libraries->get($sigla);
     }
 
     /**
      * List all libraries
      * GET /libraries
      *
-     * @return string[]
+     * @return \Mzk\ZiskejApi\ResponseModel\LibraryCollection
      *
-     * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Http\Client\Exception
      */
-    public function getLibraries(): array
+    public function getLibraries(): LibraryCollection
     {
         $apiResponse = $this->apiClient->sendApiRequest(
             new ApiRequest(
@@ -109,16 +110,17 @@ final class Api
             case 200:
                 $contents = $apiResponse->getBody()->getContents();
                 $array = json_decode($contents, true);
-                $return = isset($array['items']) && is_array($array['items'])
-                    ? $array['items']
-                    : [];
+
+                if (isset($array['items']) && is_array($array['items'])) {
+                    return LibraryCollection::fromArray($array['items']);
+                } else {
+                    return new LibraryCollection();
+                }
                 break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
                 break;
         }
-
-        return $return;
     }
 
     /*
