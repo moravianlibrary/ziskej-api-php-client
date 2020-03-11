@@ -436,7 +436,7 @@ final class ApiTest extends TestCase
 
         $output = $api->createTicket($this->eppnActive, $ticket);
 
-        $this->assertIsString($output);
+        $this->assertInstanceOf(Ticket::class, $output);
     }
 
     public function testApiCreateTicketFull(): void
@@ -451,7 +451,7 @@ final class ApiTest extends TestCase
 
         $output = $api->createTicket($this->eppnActive, $ticket);
 
-        $this->assertIsString($output);
+        $this->assertInstanceOf(Ticket::class, $output);
     }
 
     public function testApiGetTicket(): void
