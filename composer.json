@@ -6,6 +6,7 @@
     "require": {
         "php": "^7.1",
         "ext-json": "*",
+        "consistence/consistence": "^2.0",
         "php-http/client-common": "^2.0",
         "php-http/client-implementation": "^1.0",
         "php-http/httplug": "^2.0",
