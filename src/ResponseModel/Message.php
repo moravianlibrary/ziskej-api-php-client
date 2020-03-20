@@ -3,9 +3,7 @@
 namespace Mzk\ZiskejApi\ResponseModel;
 
 use DateTimeImmutable;
-use SmartEmailing\Types\DateTimesImmutable;
 use SmartEmailing\Types\PrimitiveTypes;
-use function date;
 
 class Message
 {
@@ -18,7 +16,7 @@ class Message
     /**
      * @var \DateTimeImmutable
      */
-    private $date;
+    private $createdAt;
 
     /**
      * @var bool
@@ -31,35 +29,34 @@ class Message
     private $text;
 
     /**
-     * @param string[] $data
-     * @return \Mzk\ZiskejApi\ResponseModel\Message
+     * Message constructor.
+     * @param string $sender
+     * @param \DateTimeImmutable $date
+     * @param bool $read
+     * @param string $text
      */
-
-    public static function fromArray(array $data): Message
+    public function __construct(string $sender, DateTimeImmutable $date, bool $read, string $text)
     {
-        $self = new self();
-        $self->sender = PrimitiveTypes::extractString($data, 'sender');
-        //$self->date = DatesImmutable::extract($data, 'date');
-        $self->date = DateTimesImmutable::from(date(
-            'Y-m-d H:i:s',
-            (int)strtotime((string)PrimitiveTypes::extractStringOrNull($data, 'date', true))
-        ));  // because of unspecific input format
-        $self->read = !PrimitiveTypes::extractBool($data, 'unread');
-        $self->text = PrimitiveTypes::extractString($data, 'text');
-        return $self;
+        $this->sender = $sender;
+        $this->createdAt = $date;
+        $this->read = $read;
+        $this->text = $text;
     }
 
+
     /**
-     * @return mixed[]
+     * @param string[] $data
+     * @return \Mzk\ZiskejApi\ResponseModel\Message
+     * @throws \Exception
      */
-    public function toArray(): array
+    public static function fromArray(array $data): Message
     {
-        return [
-            'sender' => $this->sender,
-            'date' => $this->date->format('Y-m-d'),
-            'read' => $this->read,
-            'text' => $this->text,
-        ];
+        return new self(
+            PrimitiveTypes::extractString($data, 'sender'),
+            new DateTimeImmutable(PrimitiveTypes::extractString($data, 'created_datetime')),
+            !PrimitiveTypes::extractBool($data, 'unread'),
+            PrimitiveTypes::extractString($data, 'text')
+        );
     }
 
     public function getSender(): string
@@ -72,14 +69,14 @@ class Message
         $this->sender = $sender;
     }
 
-    public function getDate(): DateTimeImmutable
+    public function getCreatedAt(): DateTimeImmutable
     {
-        return $this->date;
+        return $this->createdAt;
     }
 
-    public function setDate(DateTimeImmutable $date): void
+    public function setCreatedAt(DateTimeImmutable $createdAt): void
     {
-        $this->date = $date;
+        $this->createdAt = $createdAt;
     }
 
     public function isRead(): bool

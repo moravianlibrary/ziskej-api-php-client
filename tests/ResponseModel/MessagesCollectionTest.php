@@ -13,13 +13,13 @@ final class MessagesCollectionTest extends TestCase
     private $input = [
         [
             "sender" => "reader",
-            "date" => "24.1.2019 7:20",
+            "created_datetime" => "2020-02-04T12:32:44+01:00",
             "unread" => false,
             "text" => "čistý text bez formátování s novými řádky typu unix",
         ],
         [
             "sender" => "library_zk",
-            "date" => "2019-01-24",
+            "created_datetime" => "2020-02-04T12:32:44+01:00",
             "unread" => true,
             "text" => "Lorem ipsum",
         ],

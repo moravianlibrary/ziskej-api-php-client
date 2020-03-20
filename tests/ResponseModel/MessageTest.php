@@ -13,7 +13,7 @@ final class MessageTest extends TestCase
      */
     private $input = [
         "sender" => "reader",
-        "date" => "2019-01-23",
+        "created_datetime" => "2020-02-04T12:32:44+01:00",
         "unread" => false,
         "text" => "čistý text bez formátování s novými řádky typu unix",
     ];
@@ -26,15 +26,9 @@ final class MessageTest extends TestCase
 
         $this->assertEquals($this->input['sender'], $message->getSender());
         $this->assertEquals($this->input['unread'], !$message->isRead());
-        $this->assertEquals($this->input['date'], $message->getDate()->format('Y-m-d'));
-        $this->assertInstanceOf(DateTimeImmutable::class, $message->getDate());
+        $this->assertEquals($this->input['created_datetime'], $message->getCreatedAt()->format('Y-m-d\TH:i:sP'));
+        $this->assertInstanceOf(DateTimeImmutable::class, $message->getCreatedAt());
         $this->assertEquals($this->input['text'], $message->getText());
-
-        $array = $message->toArray();
-        $this->assertEquals($this->input['sender'], $array['sender']);
-        $this->assertEquals($this->input['date'], $array['date']);
-        $this->assertEquals($this->input['unread'], !$array['read']);
-        $this->assertEquals($this->input['text'], $array['text']);
     }
 
     public function testCreateEmpty(): void
