@@ -468,7 +468,7 @@ final class Api
                 $contents = $apiResponse->getBody()->getContents();
                 $array = json_decode($contents, true);
                 if (isset($array['items']) && is_array($array['items'])) {
-                    $collection = MessageCollection::fromArray($array['items']);
+                    $collection = MessageCollection::fromArray(array_reverse($array['items'], true));
                 } else {
                     $collection = new MessageCollection();
                 }
