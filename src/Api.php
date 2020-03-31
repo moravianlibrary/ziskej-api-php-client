@@ -294,6 +294,7 @@ final class Api
                 ],
                 [
                     'expand' => 'detail',
+                    'include_closed' => 1,
                 ]
             )
         );
