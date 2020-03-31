@@ -411,7 +411,7 @@ final class Api
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      * @throws \Http\Client\Exception
      */
-    public function deleteTicket(string $eppn, string $ticketId): bool
+    public function cancelTicket(string $eppn, string $ticketId): bool
     {
         $apiResponse = $this->apiClient->sendApiRequest(
             new ApiRequest(
