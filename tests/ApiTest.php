@@ -20,7 +20,7 @@ final class ApiTest extends TestCase
      *
      * @var string
      */
-    private $baseUrl = 'https://ziskej-test.techlib.cz:9080/api/v1';
+    private $baseUrl = 'https://ziskej-test.techlib.cz/api/v1';
     /**
      * Test eppn of active reader
      * @var string
