@@ -59,7 +59,7 @@ class Reader
      * @param string $sigla
      * @param bool $isGdprReg
      * @param bool $isGdprData
-     * @param string|null $reader_library_id
+     * @param string|null $readerLibraryId
      *
      * @throws \Mzk\ZiskejApi\Exception\ApiInputException
      */
@@ -70,7 +70,7 @@ class Reader
         string $sigla,
         bool $isGdprReg,
         bool $isGdprData,
-        ?string $reader_library_id = null
+        ?string $readerLibraryId = null
     ) {
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -83,7 +83,7 @@ class Reader
         $this->sigla = $sigla;
         $this->isGdprReg = $isGdprReg;
         $this->isGdprData = $isGdprData;
-        $this->$reader_library_id = $reader_library_id;
+        $this->$readerLibraryId = $readerLibraryId;
     }
 
     /**
