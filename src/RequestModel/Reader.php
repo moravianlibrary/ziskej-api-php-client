@@ -83,7 +83,7 @@ class Reader
         $this->sigla = $sigla;
         $this->isGdprReg = $isGdprReg;
         $this->isGdprData = $isGdprData;
-        $this->$readerLibraryId = $readerLibraryId;
+        $this->readerLibraryId = $readerLibraryId;
     }
 
     /**
