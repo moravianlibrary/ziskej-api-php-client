@@ -92,9 +92,7 @@ final class ApiTest extends TestCase
         $this->logger = new Logger('ZiskejApi');
     }
 
-    /*
-     * LOGIN
-     */
+    /* LOGIN */
 
     public function testApiPostLogin(): void
     {
@@ -107,9 +105,7 @@ final class ApiTest extends TestCase
         $this->assertIsString($token);
     }
 
-    /*
-     * LIBRARIES
-     */
+    /* LIBRARIES */
 
     public function testApiGetLibrary(): void
     {
@@ -161,9 +157,7 @@ final class ApiTest extends TestCase
         $this->assertNotEmpty($output->getAll());
     }
 
-    /*
-     * READERS
-     */
+    /* READERS */
 
     public function testApiIsReaderTrue(): void
     {
@@ -417,9 +411,7 @@ final class ApiTest extends TestCase
         $this->assertEmpty($output);
     }
 
-    /*
-     * TICKETS
-     */
+    /* TICKETS */
 
     public function testApiGetTicketsList(): void
     {
@@ -478,9 +470,7 @@ final class ApiTest extends TestCase
         }
     }
 
-    /*
-     * MESSAGES
-     */
+    /* MESSAGES */
 
     public function testApiGetMessages(): void
     {
