@@ -13,14 +13,11 @@ class ApiFactory
 
     public static function createApi(): Api
     {
+        $keyFile = __DIR__ . '/../.private/cert-cpk-ziskej-api.key';
+
         $signer = new Sha512();
-        $privateKey = new Key('file://'. __DIR__ . '/.private/cert-cpk-ziskej-api.key');
+        $privateKey = new Key('file://'. $keyFile);
         $time = time();
-                'https://ziskej-test.techlib.cz/api/v1',
-                null,
-                new Logger('ZiskejApi')
-            )
-        );
 
         $token = (new Builder())
             ->issuedBy('cpk') // Configures the issuer (iss claim)
@@ -29,15 +26,13 @@ class ApiFactory
             ->withClaim('app', 'cpk')
             ->getToken($signer, $privateKey); // Retrieves the generated token
 
-        $token = $api->login($_ENV['username'], $_ENV['password']);
-
         //@todo store token
 
         return new Api(
             new ApiClient(
                 null,
                 'https://ziskej-test.techlib.cz/api/v1',
-                new Bearer($token),
+                new Bearer((string)$token),
                 new Logger('ZiskejApi')
             )
         );

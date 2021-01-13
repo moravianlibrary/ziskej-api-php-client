@@ -22,56 +22,6 @@ final class Api
     }
 
     /*
-     * LOGIN
-     */
-
-    /**
-     * Authenticace API and get access token
-     * POST /login
-     *
-     * @param string $username
-     * @param string $password
-     * @return string
-     *
-     * @throws \Http\Client\Exception
-     * @throws \Mzk\ZiskejApi\Exception\ApiException
-     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
-     */
-    public function login(string $username, string $password): string
-    {
-        $apiResponse = $this->apiClient->sendApiRequest(
-            new ApiRequest(
-                'POST',
-                '/login',
-                [],
-                [],
-                [
-                    'username' => $username,
-                    'password' => $password,
-                ]
-            )
-        );
-
-        switch ($apiResponse->getStatusCode()) {
-            case 200:
-                $contents = $apiResponse->getBody()->getContents();
-                $data = json_decode($contents, true);
-                if (empty($data['token'])) {
-                    throw new \Mzk\ZiskejApi\Exception\ApiException(
-                        'Ziskej API error: API did not return the token key.'
-                    );
-                }
-                $return = $data['token'];
-                break;
-            default:
-                throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
-        }
-
-        return $return;
-    }
-
-    /*
      * LIBRARIES
      */
 

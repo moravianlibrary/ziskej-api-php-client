@@ -10,7 +10,6 @@ use Mzk\ZiskejApi\ResponseModel\LibraryCollection;
 use Mzk\ZiskejApi\ResponseModel\MessageCollection;
 use Mzk\ZiskejApi\ResponseModel\Ticket;
 use Mzk\ZiskejApi\ResponseModel\TicketsCollection;
-use Symfony\Component\Dotenv\Dotenv;
 
 final class ApiTest extends TestCase
 {
@@ -102,10 +101,7 @@ final class ApiTest extends TestCase
         $apiClient = new ApiClient(null, $this->baseUrl, null, $this->logger);
         $api = new Api($apiClient);
 
-        $dotEnv = new Dotenv();
-        $dotEnv->load(__DIR__ . '/.env');
-
-        $token = $api->login($_ENV['username'], $_ENV['password']);
+        $token = null;  //@todo!!!
 
         $this->assertNotEmpty($token);
         $this->assertIsString($token);
