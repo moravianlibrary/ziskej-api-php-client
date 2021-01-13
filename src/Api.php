@@ -80,6 +80,45 @@ final class Api
         }
     }
 
+    /**
+     * List all active libraries
+     * GET /libraries
+     *
+     * @return \Mzk\ZiskejApi\ResponseModel\LibraryCollection
+     *
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Http\Client\Exception
+     */
+    public function getLibrariesActive(): LibraryCollection
+    {
+        $apiResponse = $this->apiClient->sendApiRequest(
+            new ApiRequest(
+                'GET',
+                '/libraries',
+                [],
+                [
+                    'service' => 'mvszk'
+                ]
+            )
+        );
+
+        switch ($apiResponse->getStatusCode()) {
+            case 200:
+                $contents = $apiResponse->getBody()->getContents();
+                $array = json_decode($contents, true);
+
+                if (isset($array['items']) && is_array($array['items'])) {
+                    return LibraryCollection::fromArray($array['items']);
+                } else {
+                    return new LibraryCollection();
+                }
+                break;
+            default:
+                throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
+                break;
+        }
+    }
+
     /*
      * READERS
      */
