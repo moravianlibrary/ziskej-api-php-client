@@ -344,8 +344,6 @@ final class Api
         $apiResponse = $this->apiClient->sendApiRequest($apiRequest);
 
         switch ($apiResponse->getStatusCode()) {
-            //@todo api should return code 201, but return 200
-            case 200:
             case 201:
                 $contents = $apiResponse->getBody()->getContents();
                 $array = json_decode($contents, true);
