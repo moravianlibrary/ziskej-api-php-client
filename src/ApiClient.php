@@ -12,7 +12,6 @@ use Http\Discovery\MessageFactoryDiscovery;
 use Http\Discovery\StreamFactoryDiscovery;
 use Http\Discovery\UriFactoryDiscovery;
 use Http\Message\Authentication;
-use Http\Message\Formatter\FullHttpMessageFormatter;
 use Http\Message\MultipartStream\MultipartStreamBuilder;
 use Psr\Log\LoggerInterface;
 use function GuzzleHttp\Psr7\stream_for;
@@ -69,7 +68,7 @@ final class ApiClient
         }
 
         if ($this->logger) {
-            $formater = new FullHttpMessageFormatter();
+            $formater = new CustomHttpMessageFormatter();
             $this->plugins[] = new LoggerPlugin($this->logger, $formater);
         }
 
