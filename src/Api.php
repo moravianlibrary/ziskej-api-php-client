@@ -36,7 +36,7 @@ final class Api
      */
     public function getLibrary(string $sigla): ?Library
     {
-        $libraries = $this->getLibraries();
+        $libraries = $this->getLibrariesAll();
         return $libraries->get($sigla);
     }
 
@@ -49,12 +49,17 @@ final class Api
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      * @throws \Http\Client\Exception
      */
-    public function getLibraries(): LibraryCollection
+    public function getLibrariesAll(): LibraryCollection
     {
         $apiResponse = $this->apiClient->sendApiRequest(
             new ApiRequest(
                 'GET',
-                '/libraries'
+                '/libraries',
+                [],
+                [
+                    'service' => 'mvszk',
+                    'include_deactivated' => 1,
+                ]
             )
         );
 

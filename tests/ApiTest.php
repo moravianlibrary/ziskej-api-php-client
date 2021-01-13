@@ -131,7 +131,7 @@ final class ApiTest extends TestCase
         $this->assertNull($library);
     }
 
-    public function testApiGetLibraries(): void
+    public function testApiGetLibrariesAll(): void
     {
         $guzzleClient = Client::createWithConfig([
             'connect_timeout' => 10,
@@ -140,7 +140,7 @@ final class ApiTest extends TestCase
         $apiClient = new ApiClient($guzzleClient, $this->baseUrl, null, $this->logger);
         $api = new Api($apiClient);
 
-        $output = $api->getLibraries();
+        $output = $api->getLibrariesAll();
 
         $this->assertInstanceOf(LibraryCollection::class, $output);
         $this->assertNotEmpty($output->getAll());
