@@ -19,7 +19,7 @@ final class ApiTest extends TestCase
      *
      * @var string
      */
-    private $baseUrl = 'https://ziskej-test.techlib.cz:9080/api/v1';
+    private $baseUrl;
     /**
      * Test eppn of active reader
      * @var string
@@ -88,6 +88,9 @@ final class ApiTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        (new \DevCoder\DotEnv(__DIR__ . '/.env'))->load();
+        $this->baseUrl = getenv('APP_API_URL');
 
         $this->logger = new Logger('ZiskejApi');
     }

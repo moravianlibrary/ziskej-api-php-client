@@ -31,7 +31,7 @@ class ApiFactory
         return new Api(
             new ApiClient(
                 null,
-                'https://ziskej-test.techlib.cz/api/v1',
+                getenv('APP_API_URL'),
                 new Bearer((string)$token),
                 new Logger('ZiskejApi')
             )
