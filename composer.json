@@ -21,7 +21,7 @@
         "devcoder-xyz/php-dotenv": "^1.0",
         "graylog2/gelf-php": "^1.6",
         "guzzlehttp/psr7": "^1.0",
-        "lcobucci/jwt": "^3.3",
+        "lcobucci/jwt": "3.3.3",
         "monolog/monolog": "^1.24",
         "opendevel/coding-standard": "^1.0",
         "php-http/guzzle6-adapter": "^2.0",
