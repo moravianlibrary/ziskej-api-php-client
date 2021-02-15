@@ -95,19 +95,6 @@ final class ApiTest extends TestCase
         $this->logger = new Logger('ZiskejApi');
     }
 
-    /* LOGIN */
-
-    public function testApiPostLogin(): void
-    {
-        $apiClient = new ApiClient(null, $this->baseUrl, null, $this->logger);
-        $api = new Api($apiClient);
-
-        $token = null;  //@todo!!!
-
-        $this->assertNotEmpty($token);
-        $this->assertIsString($token);
-    }
-
     /* LIBRARIES */
 
     public function testApiGetLibrary(): void
@@ -245,18 +232,18 @@ final class ApiTest extends TestCase
         $this->assertNull($reader);
     }
 
-    public function testApiGetReader422DeactivatedReader(): void
-    {
-        $api = ApiFactory::createApi();
-
-        $reader = $api->getReader($this->eppnDeactivated);
-
-        $this->assertInstanceOf(ResponseModel\Reader::class, $reader);
-
-        if ($reader) {
-            $this->assertSame(false, $reader->isActive());
-        }
-    }
+//    public function testApiGetReader422DeactivatedReader(): void
+//    {
+//        $api = ApiFactory::createApi();
+//
+//        $reader = $api->getReader($this->eppnDeactivated);
+//
+//        $this->assertInstanceOf(ResponseModel\Reader::class, $reader);
+//
+//        if ($reader) {
+//            $this->assertSame(false, $reader->isActive());
+//        }
+//    }
 
 
     public function testApiCreateReader200(): void
