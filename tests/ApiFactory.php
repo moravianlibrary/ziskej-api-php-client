@@ -17,12 +17,11 @@ class ApiFactory
 
         $signer = new Sha512();
         $privateKey = new Key('file://'. $keyFile);
-        $time = time();
 
         $token = (new Builder())
             ->issuedBy('cpk') // Configures the issuer (iss claim)
-            ->issuedAt($time) // Configures the time that the token was issue (iat claim)
-            ->expiresAt($time + 3600) // Configures the expiration time of the token (exp claim)
+            ->issuedAt(new \DateTimeImmutable()) // Configures the time that the token was issue (iat claim)
+            ->expiresAt((new \DateTimeImmutable())->setTimestamp(time() + 3600)) // Configures the expiration time of the token (exp claim)
             ->withClaim('app', 'cpk')
             ->getToken($signer, $privateKey); // Retrieves the generated token
 
