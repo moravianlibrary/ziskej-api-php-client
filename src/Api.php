@@ -210,15 +210,6 @@ final class Api
             case 204:
                 return $this->getReader($eppn);
                 break;
-            case 422:
-                // Library is not active
-                throw new \Mzk\ZiskejApi\Exception\ApiInputException(
-                    sprintf(
-                        'Ziskej API input error: Library with sigla "%s" is not active',
-                        $reader->getSigla()
-                    ),
-                    $apiResponse->getStatusCode()
-                );
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
                 break;
