@@ -8,7 +8,7 @@ class Messages
     /**
      * @var bool
      */
-    private $read = false;
+    private bool $read = false;
 
     public function __construct(bool $read)
     {

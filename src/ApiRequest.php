@@ -7,32 +7,36 @@ class ApiRequest
 
     /**
      * HTTP Method
+     *
      * @var string
      */
-    protected $method;
+    protected string $method;
 
     /**
      * URI endpoint
+     *
      * @var string
      */
-    protected $endpoint;
+    protected string $endpoint;
 
     /**
      * @var string[]
      */
-    protected $urlQuery = [];
+    protected array $urlQuery = [];
 
     /**
      * URL params
+     *
      * @var string[]
      */
-    protected $paramsUrl = [];
+    protected array $paramsUrl = [];
 
     /**
      * Data params
+     *
      * @var string[]
      */
-    protected $paramsData = [];
+    protected array $paramsData = [];
 
     /**
      * RequestModel constructor.

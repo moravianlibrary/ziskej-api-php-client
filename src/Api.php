@@ -14,7 +14,7 @@ final class Api
     /**
      * @var \Mzk\ZiskejApi\ApiClient
      */
-    private $apiClient;
+    private ApiClient $apiClient;
 
     public function __construct(ApiClient $apiClient)
     {
@@ -187,7 +187,6 @@ final class Api
      * @return \Mzk\ZiskejApi\ResponseModel\Reader|null
      *
      * @throws \Http\Client\Exception
-     * @throws \Mzk\ZiskejApi\Exception\ApiInputException
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
     public function updateReader(string $eppn, RequestModel\Reader $reader): ?ResponseModel\Reader
@@ -335,7 +334,7 @@ final class Api
 
                 if (empty($array['id'])) {
                     throw new \Mzk\ZiskejApi\Exception\ApiException(
-                        'Ziskej API error: API did not return "id" parameter.'
+                        'Ziskej API error: API did not return "id" parameter.'  //@todo jina zprava
                     );
                 }
 

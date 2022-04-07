@@ -6,96 +6,83 @@ use SmartEmailing\Types\PrimitiveTypes;
 
 class Reader
 {
-
     /**
      * Ziskej ID
-     *
      * @var string
      */
-    private $readerId;
+    private string $readerId;
 
     /**
      * Active in Ziskej
-     *
      * @var bool
      */
-    private $isActive;
+    private bool $isActive;
 
     /**
      * Firstname
-     *
      * @var string|null
      */
-    private $firstName = null;
+    private ?string $firstName = null;
 
     /**
      * Lastname
      * @var string|null
      */
-    private $lastName = null;
+    private ?string $lastName = null;
 
     /**
      * Email address
-     *
      * @var string|null //@todo refactor to email object
      */
-    private $email = null;
+    private ?string $email = null;
 
     /**
-     * zda posílat notifikace
-     *
+     * Zda posílat notifikace
      * @var bool|null
      */
-    private $isNotificationEnabled = null;
+    private ?bool $isNotificationEnabled = null;
 
     /**
-     * sigla mateřské knihovny
-     *
+     * Sigla mateřské knihovny
      * @var string|null
      */
-    private $sigla = null;
+    private ?string $sigla = null;
 
     /**
-     * souhlas s registrací
-     *
+     * Souhlas s registrací
      * @var bool|null
      */
-    private $isGdprReg;
+    private ?bool $isGdprReg;
 
     /**
-     * souhlas s uložením dat
-     *
+     * Souhlas s uložením dat
      * @var bool|null
      */
-    private $isGdprData;
+    private ?bool $isGdprData;
 
     /**
-     * Cound of tickets
-     *
+     * Count of tickets
      * @var int|null
      */
-    private $countTickets = null;
+    private ?int $countTickets = null;
 
     /**
      * Count of open tickets
-     *
      * @var int|null
      */
-    private $countTicketsOpen = null;
+    private ?int $countTicketsOpen = null;
 
     /**
      * Count of messages
-     *
      * @var int|null
      */
-    private $countMessages = null;
+    private ?int $countMessages = null;
 
     /**
      * Count of unread messages
-     *
      * @var int|null
      */
-    private $countMessagesUnread = null;
+    private ?int $countMessagesUnread = null;
 
     public function __construct(
         string $readerId,

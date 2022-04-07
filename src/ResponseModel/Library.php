@@ -4,13 +4,12 @@ namespace Mzk\ZiskejApi\ResponseModel;
 
 class Library
 {
-
     /**
      * Sigla code
      *
      * @var string
      */
-    private $sigla;
+    private string $sigla;
 
     public function __construct(string $sigla)
     {

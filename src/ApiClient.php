@@ -29,22 +29,22 @@ final class ApiClient
     /**
      * @var \Http\Client\HttpClient
      */
-    private $httpClient;
+    private HttpClient $httpClient;
 
     /**
      * @var \Http\Message\Authentication|null
      */
-    private $authentication = null;
+    private ?Authentication $authentication = null;
 
     /**
      * @var \Psr\Log\LoggerInterface|null
      */
-    private $logger = null;
+    private ?LoggerInterface $logger = null;
 
     /**
      * @var mixed[]
      */
-    private $plugins = [];
+    private array $plugins = [];
 
     public function __construct(
         ?HttpClient $httpClient,

@@ -11,7 +11,7 @@ class ApiResponse
     /**
      * @var \Psr\Http\Message\ResponseInterface
      */
-    private $response;
+    private ResponseInterface $response;
 
     public function __construct(ResponseInterface $response)
     {

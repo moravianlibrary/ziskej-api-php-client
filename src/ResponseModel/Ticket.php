@@ -9,117 +9,117 @@ use SmartEmailing\Types\PrimitiveTypes;
 
 class Ticket
 {
-
     /**
      * Ticket id
      *
      * @var string
      */
-    private $id;
+    private string $id;
 
     /**
      * Ticket type
      *
      * @var string|null
      */
-    private $type = null;
+    private ?string $type = null;
 
     /**
-     * Human readable ticket ID
+     * Human-readable ticket ID
      *
      * @var string|null
      */
-    private $hid = null;
+    private ?string $hid = null;
 
     /**
      * Sigla of main library
      *
      * @var string|null
      */
-    private $sigla = null;
+    private ?string $sigla = null;
 
     /**
      * CPK document ID
      *
      * @var string|null
      */
-    private $documentId = null;
+    private ?string $documentId = null;
 
     /**
      * Status
      *
      * @var string|null
      */
-    private $status = null;
+    private ?string $status = null;
 
     /**
      * History of ticket statuses
      *
      * @var \Mzk\ZiskejApi\ResponseModel\Status[]
      */
-    private $statusHistory = [];
+    private array $statusHistory = [];
 
     /**
      * Is ticket open
      *
      * @var bool|null
      */
-    private $isOpen = null;
+    private ?bool $isOpen = null;
 
     /**
      * Payment ID
      *
      * @var string|null
      */
-    private $paymentId = null;
+    private ?string $paymentId = null;
 
     /**
      * Link to payment URL
      *
      * @var string|null  //@todo url type
      */
-    private $paymentUrl = null;
+    private ?string $paymentUrl = null;
 
     /**
      * Created datetime
      *
      * @var \DateTimeImmutable
      */
-    private $createdAt;
+    private DateTimeImmutable $createdAt;
 
     /**
      * Last updated datetime
      *
      * @var \DateTimeImmutable|null
      */
-    private $updatedAt = null;
+    private ?DateTimeImmutable $updatedAt = null;
 
     /**
      * Date to return
      *
      * @var \DateTimeImmutable|null
      */
-    private $returnAt = null;
+    private ?DateTimeImmutable $returnAt = null;
 
     /**
      * Delivery to date
      *
      * @var \DateTimeImmutable|null
      */
-    private $requestedAt = null;
+    private ?DateTimeImmutable $requestedAt = null;
 
     /**
      * Number of ticket's messagess
+     *
      * @var int
      */
-    private $countMessages = 0;
+    private int $countMessages = 0;
 
     /**
      * Number of unread ticket's messagess
      *
      * @var int
      */
-    private $countMessagesUnread = 0;
+    private int $countMessagesUnread = 0;
 
     public function __construct(string $id, DateTimeImmutable $createdAt)
     {

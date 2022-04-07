@@ -6,13 +6,12 @@ use SmartEmailing\Types\Arrays;
 
 class TicketsCollection
 {
-
     //@todo rename to TicketCollection
 
     /**
      * @var \Mzk\ZiskejApi\ResponseModel\Ticket[]
      */
-    private $items = [];
+    private array $items = [];
 
     /**
      * @param string[][] $data

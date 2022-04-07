@@ -6,11 +6,10 @@ use SmartEmailing\Types\PrimitiveTypes;
 
 class LibraryCollection
 {
-
     /**
      * @var \Mzk\ZiskejApi\ResponseModel\Library[]
      */
-    private $items = [];
+    private array $items = [];
 
     /**
      * @param string[][] $data

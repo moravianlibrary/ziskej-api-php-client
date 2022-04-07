@@ -9,7 +9,7 @@ class Message
      * Message text
      * @var string
      */
-    private $text;
+    private string $text;
 
     public function __construct(string $text)
     {

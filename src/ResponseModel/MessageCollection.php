@@ -6,11 +6,10 @@ use SmartEmailing\Types\Arrays;
 
 class MessageCollection
 {
-
     /**
      * @var \Mzk\ZiskejApi\ResponseModel\Message[]
      */
-    private $items = [];
+    private array $items = [];
 
     /**
      * @param string[][] $data

@@ -7,20 +7,18 @@ use SmartEmailing\Types\PrimitiveTypes;
 
 class Status
 {
-
     /**
      * Status created datetime
      *
      * @var \DateTimeImmutable
      */
-    private $createdAt;
+    private DateTimeImmutable $createdAt;
 
     /**
      * Status name
-     *
      * @var string
      */
-    private $name;
+    private string $name;
 
     public function __construct(DateTimeImmutable $createdAt, string $name)
     {

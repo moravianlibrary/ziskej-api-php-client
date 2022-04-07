@@ -9,27 +9,31 @@ class Ticket
 
     /**
      * Document ID
+     *
      * @var string
      */
-    private $documentId;
+    protected string $documentId;
 
     /**
      * Requested date
+     *
      * @var \DateTimeImmutable|null
      */
-    private $dateRequested = null;
+    protected ?DateTimeImmutable $dateRequested = null;
 
     /**
      * Alternative document IDs
+     *
      * @var string[]
      */
-    private $documentAltIds = [];
+    protected array $documentAltIds = [];
 
     /**
      * Reader's note
+     *
      * @var string|null
      */
-    private $note = null;
+    protected ?string $note = null;
 
     /**
      * Ticket constructor.

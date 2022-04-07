@@ -18,7 +18,7 @@ class CustomHttpMessageFormatter implements Formatter
      *
      * @var int|null
      */
-    private $maxBodyLength;
+    private ?int $maxBodyLength;
 
     public function __construct(?int $maxBodyLength = 1000)
     {
@@ -28,7 +28,7 @@ class CustomHttpMessageFormatter implements Formatter
     /**
      * {@inheritdoc}
      */
-    public function formatRequest(RequestInterface $request)
+    public function formatRequest(RequestInterface $request): string
     {
         $message = sprintf(
             "%s %s HTTP/%s\n",
@@ -47,7 +47,7 @@ class CustomHttpMessageFormatter implements Formatter
     /**
      * {@inheritdoc}
      */
-    public function formatResponse(ResponseInterface $response)
+    public function formatResponse(ResponseInterface $response): string
     {
         $message = sprintf(
             "HTTP/%s %s %s\n",
