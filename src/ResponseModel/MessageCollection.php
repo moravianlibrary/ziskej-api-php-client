@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\ResponseModel;
 
@@ -39,5 +41,4 @@ class MessageCollection
     {
         return $this->items;
     }
-
 }

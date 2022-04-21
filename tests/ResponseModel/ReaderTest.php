@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\ResponseModel;
 
@@ -72,5 +74,4 @@ final class ReaderTest extends TestCase
         $this->assertSame($array['count_messages'], $reader->getCountMessages());
         $this->assertSame($array['count_messages_unread'], $reader->getCountMessagesUnread());
     }
-
 }

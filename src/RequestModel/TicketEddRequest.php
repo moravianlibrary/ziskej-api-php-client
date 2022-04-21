@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\RequestModel;
 
@@ -361,5 +363,4 @@ class TicketEddRequest extends TicketRequest
     {
         $this->dateRequested = $dateRequested;
     }
-
 }

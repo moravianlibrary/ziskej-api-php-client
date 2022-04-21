@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mzk\ZiskejApi;
 
@@ -14,6 +16,7 @@ use Http\Discovery\UriFactoryDiscovery;
 use Http\Message\Authentication;
 use Http\Message\MultipartStream\MultipartStreamBuilder;
 use Psr\Log\LoggerInterface;
+
 use function GuzzleHttp\Psr7\stream_for;
 
 final class ApiClient
@@ -129,5 +132,4 @@ final class ApiClient
 
         return new ApiResponse($response);
     }
-
 }

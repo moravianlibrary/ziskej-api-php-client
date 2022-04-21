@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\ResponseModel;
 
@@ -99,5 +101,4 @@ final class TicketTest extends TestCase
         $this->assertEquals($this->input['count_messages'], $ticket->getCountMessages());
         $this->assertEquals($this->input['count_messages_unread'], $ticket->getCountMessagesUnread());
     }
-
 }

@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\ResponseModel;
 
@@ -33,5 +35,4 @@ final class StatusTest extends TestCase
                               "id" => 'wrong status name',
                           ]);
     }
-
 }

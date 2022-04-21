@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\RequestModel;
 
@@ -145,5 +147,4 @@ class Reader
     {
         return $this->readerLibraryId;
     }
-
 }

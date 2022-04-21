@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\ResponseModel;
 
@@ -36,5 +38,4 @@ final class MessageTest extends TestCase
         $this->expectException(\SmartEmailing\Types\InvalidTypeException::class);
         Message::fromArray([]);
     }
-
 }
