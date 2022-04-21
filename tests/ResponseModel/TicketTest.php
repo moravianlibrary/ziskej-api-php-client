@@ -42,12 +42,12 @@ final class TicketTest extends TestCase
 
     public function testCreateEmptyObject(): void
     {
-        $ticket = new Ticket('ticket_1', new DateTimeImmutable('2019-12-31 13:30:00'));
+        $ticket = new Ticket('mvs', 'ticket_1', new DateTimeImmutable('2019-12-31 13:30:00'));
 
         $this->assertEquals('ticket_1', $ticket->getId());
         $this->assertEquals('2019-12-31 13:30:00', $ticket->getCreatedAt()->format('Y-m-d H:i:s'));
+        $this->assertEquals('mvs', $ticket->getType());
 
-        $this->assertNull($ticket->getType());
         $this->assertNull($ticket->getHid());
         $this->assertNull($ticket->getSigla());
         $this->assertNull($ticket->getDocumentId());

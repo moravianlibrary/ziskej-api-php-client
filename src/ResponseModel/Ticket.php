@@ -3,6 +3,7 @@
 namespace Mzk\ZiskejApi\ResponseModel;
 
 use DateTimeImmutable;
+use Mzk\ZiskejApi\Enum\TicketType;
 use SmartEmailing\Types\Arrays;
 use SmartEmailing\Types\DatesImmutable;
 use SmartEmailing\Types\PrimitiveTypes;
@@ -17,11 +18,12 @@ class Ticket
     private string $id;
 
     /**
-     * Ticket type
+     * Ticket type (mvs, edd)
      *
-     * @var string|null
+     * @var string
+     * @see \Mzk\ZiskejApi\Enum\TicketType
      */
-    private ?string $type = null;
+    private string $type;
 
     /**
      * Human-readable ticket ID
@@ -121,8 +123,18 @@ class Ticket
      */
     private int $countMessagesUnread = 0;
 
-    public function __construct(string $id, DateTimeImmutable $createdAt)
+    /**
+     * @throws \Consistence\Enum\InvalidEnumValueException
+     */
+    public function __construct(
+        string $type,
+        string $id,
+        DateTimeImmutable $createdAt
+    )
     {
+        TicketType::checkValue($type);
+
+        $this->type = $type;
         $this->id = $id;
         $this->createdAt = $createdAt;
     }
@@ -137,6 +149,7 @@ class Ticket
     public static function fromArray(array $data): Ticket
     {
         $ticket = new self(
+            PrimitiveTypes::extractString($data, 'ticket_type'),
             PrimitiveTypes::extractString($data, 'ticket_id'),
             new DateTimeImmutable(PrimitiveTypes::extractString($data, 'created_datetime'))
         );
@@ -177,7 +190,7 @@ class Ticket
         return $this->id;
     }
 
-    public function getType(): ?string
+    public function getType(): string
     {
         return $this->type;
     }
