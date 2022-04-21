@@ -23,7 +23,6 @@
         "guzzlehttp/psr7": "^1.0",
         "lcobucci/jwt": "^4.0",
         "monolog/monolog": "^1.24",
-        "opendevel/coding-standard": "^1.0",
         "php-http/guzzle6-adapter": "^2.0",
         "php-http/mock-client": "^1.0",
         "php-http/message": "^1.0",
@@ -46,8 +45,8 @@
         }
     },
     "scripts": {
-        "phpcbf": "phpcbf --standard=phpcs.xml --extensions=php --encoding=utf-8 --tab-width=4 -s -p -v",
-        "phpcs": "phpcs --standard=phpcs.xml --extensions=php  --encoding=utf-8 --tab-width=4 -s -p -v",
+        "phpcbf": "phpcbf --standard=PSR12 --extensions=php --encoding=utf-8 --tab-width=4 -spv src tests",
+        "phpcs": "phpcs --standard=PSR12 --extensions=php  --encoding=utf-8 --tab-width=4 -spv src tests",
         "phpstan": "phpstan analyse -l 7 --memory-limit=500M --debug -c phpstan.neon",
         "phpunit": "phpunit --colors=always -c phpunit.xml",
         "test": [
