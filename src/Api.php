@@ -307,14 +307,14 @@ final class Api
      * POST /readers/:eppn/tickets
      *
      * @param string $eppn
-     * @param \Mzk\ZiskejApi\RequestModel\Ticket $ticket
+     * @param \Mzk\ZiskejApi\RequestModel\TicketRequest $ticket
      * @return \Mzk\ZiskejApi\ResponseModel\Ticket|null Created Ticket or null
      *
      * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiException
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function createTicket(string $eppn, RequestModel\Ticket $ticket): ?Ticket
+    public function createTicket(string $eppn, RequestModel\TicketRequest $ticket): ?Ticket
     {
         $apiRequest = new ApiRequest(
             'POST',

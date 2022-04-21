@@ -3,9 +3,12 @@
 namespace Mzk\ZiskejApi;
 
 use DateTimeImmutable;
+use DevCoder\DotEnv;
 use Http\Adapter\Guzzle6\Client;
 use Http\Message\Authentication\Bearer;
 use Monolog\Logger;
+use Mzk\ZiskejApi\Enum\TicketEddDocDataSource;
+use Mzk\ZiskejApi\Enum\TicketEddSubtype;
 use Mzk\ZiskejApi\ResponseModel\LibraryCollection;
 use Mzk\ZiskejApi\ResponseModel\MessageCollection;
 use Mzk\ZiskejApi\ResponseModel\Ticket;
@@ -56,7 +59,9 @@ final class ApiTest extends TestCase
     /**
      * @var string
      */
-    private $ticketId = '044cfd07a8f345fb';
+    private $ticketIdMvs = '160455000cf24524';
+
+    private $ticketIdEdd = '160455000cf24524';
 
     /**
      * @var string
@@ -89,7 +94,7 @@ final class ApiTest extends TestCase
     {
         parent::setUp();
 
-        (new \DevCoder\DotEnv(__DIR__ . '/.env'))->load();
+        (new DotEnv(__DIR__ . '/.env'))->load();
         $this->baseUrl = getenv('APP_API_URL');
 
         $this->logger = new Logger('ZiskejApi');
@@ -120,8 +125,8 @@ final class ApiTest extends TestCase
     public function testApiGetLibrariesAll(): void
     {
         $guzzleClient = Client::createWithConfig([
-            'connect_timeout' => 10,
-        ]);
+                                                     'connect_timeout' => 10,
+                                                 ]);
 
         $apiClient = new ApiClient($guzzleClient, $this->baseUrl, null, $this->logger);
         $api = new Api($apiClient);
@@ -135,8 +140,8 @@ final class ApiTest extends TestCase
     public function testApiGetLibrariesActive(): void
     {
         $guzzleClient = Client::createWithConfig([
-                'connect_timeout' => 10,
-            ]);
+                                                     'connect_timeout' => 10,
+                                                 ]);
 
         $apiClient = new ApiClient($guzzleClient, $this->baseUrl, null, $this->logger);
         $api = new Api($apiClient);
@@ -421,42 +426,163 @@ final class ApiTest extends TestCase
         $this->assertInstanceOf(TicketsCollection::class, $output);
     }
 
-    public function testApiCreateTicket(): void
+    /**
+     * @throws \Http\Client\Exception
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Mzk\ZiskejApi\Exception\ApiException
+     */
+    public function testApiCreateTicketMvs(): void
     {
         $api = ApiFactory::createApi();
 
-        $ticket = new RequestModel\Ticket($this->docId);
+        $ticket = new RequestModel\TicketMvsRequest($this->docId);
 
         $output = $api->createTicket($this->eppnActive, $ticket);
 
         $this->assertInstanceOf(Ticket::class, $output);
     }
 
-    public function testApiCreateTicketFull(): void
+    /**
+     * @throws \Http\Client\Exception
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Mzk\ZiskejApi\Exception\ApiException
+     * @throws \Exception
+     */
+    public function testApiCreateTicketMvsFull(): void
     {
         $api = ApiFactory::createApi();
 
-        $ticket = new RequestModel\Ticket($this->docId);
-
-        $ticket->setDateRequested(new DateTimeImmutable($this->date));
-        $ticket->setNote($this->note);
-        $ticket->setDocumentAltIds($this->docAltIds);
+        $ticket = new RequestModel\TicketMvsRequest(
+            $this->docId,
+            new DateTimeImmutable($this->date),
+            $this->docAltIds,
+            $this->note
+        );
 
         $output = $api->createTicket($this->eppnActive, $ticket);
 
         $this->assertInstanceOf(Ticket::class, $output);
     }
 
-    public function testApiGetTicket(): void
+    public function testApiCreateTicketEddAutoArticleMin(): void
     {
         $api = ApiFactory::createApi();
 
-        $output = $api->getTicket($this->eppnActive, $this->ticketId);
+        $ticket = new RequestModel\TicketEddRequest(
+            TicketEddDocDataSource::AUTO,
+            TicketEddSubtype::ARTICLE,
+            'Zahrádkář. -- ISSN 0139-7761. -- Roč. 54, č. 1 (2022), s. 4-5',
+            'Okrasná zahrada',
+            'anl.ANL01-001899088'
+        );
+
+        $output = $api->createTicket($this->eppnActive, $ticket);
+
+        $this->assertInstanceOf(Ticket::class, $output);
+    }
+
+    public function testApiCreateTicketEddAutoArticleFull(): void
+    {
+        $api = ApiFactory::createApi();
+
+        $ticket = new RequestModel\TicketEddRequest(
+            TicketEddDocDataSource::AUTO,
+            TicketEddSubtype::ARTICLE,
+            'Zahrádkář. -- ISSN 0139-7761. -- Roč. 54, č. 1 (2022), s. 4-5',
+            'Okrasná zahrada',
+            'anl.ANL01-001899088',
+        );
+        $ticket->setDocNumberYear('2022');
+        $ticket->setDocNumberPyear('2022');
+        $ticket->setDocNumberPnumber('1');
+        $ticket->setPagesFrom(1);
+        $ticket->setPagesTo(5);
+        $ticket->setDocAuthor('Josef Černý');
+        $ticket->setDocIssuer('Praha 1969');
+        $ticket->setDocISSN('ISSN 0139-7761');
+        $ticket->setDocCitation('ČERNÝ, Josef. Okrasná zahrada. Zahrádkář. 2022, 54(1), 4-5. ISSN 0139-7761.');
+        $ticket->setDocNote('Poznámka k objednávce');
+        $ticket->setReaderNote('Zpráva od čtenáře pro knihovníka');
+        $ticket->setDateRequested(new DateTimeImmutable('+3 day'));
+
+        $output = $api->createTicket($this->eppnActive, $ticket);
+
+        $this->assertInstanceOf(Ticket::class, $output);
+    }
+
+    public function testApiCreateTicketEddAutoSelectionMin(): void
+    {
+        $api = ApiFactory::createApi();
+
+        $ticket = new RequestModel\TicketEddRequest(
+            TicketEddDocDataSource::AUTO,
+            TicketEddSubtype::SELECTION,
+            'Reflex : CS - Společenský týdeník',
+            'Hula hoop!',
+            'vkol.SVK01-000489187'
+        );
+
+        $output = $api->createTicket($this->eppnActive, $ticket);
+
+        $this->assertInstanceOf(Ticket::class, $output);
+    }
+
+    public function testApiCreateTicketEddAutoSelectionFull(): void
+    {
+        $api = ApiFactory::createApi();
+
+        $ticket = new RequestModel\TicketEddRequest(
+            TicketEddDocDataSource::AUTO,
+            TicketEddSubtype::SELECTION,
+            'Reflex : CS - Společenský týdeník',
+            'Hula hoop!',
+            'vkol.SVK01-000489187'
+        );
+        //$ticket->setDocumentAltIds(); //@todo
+        $ticket->setDocNumberYear('2022');
+        $ticket->setDocNumberPyear('2022');
+        $ticket->setDocNumberPnumber('13');
+        $ticket->setDocVolume('13');
+        $ticket->setPagesFrom(38);
+        $ticket->setPagesTo(40);
+        $ticket->setDocAuthor('Veronika Bednářová');
+        $ticket->setDocIssuer('Praha 2022');
+        $ticket->setDocISSN('0862-6634');
+        $ticket->setDocISBN('0862-6634');
+
+        $ticket->setDocCitation('Reflex: CS - Společenský týdeník. Praha: Ringier ČR, 1990-. ISSN 0862-6634. Dostupné také z: https://www.reflex.cz/.');
+        $ticket->setDocNote('Poznámka k objednávce');
+        $ticket->setReaderNote('Zpráva od čtenáře pro knihovníka');
+        $ticket->setDateRequested(new DateTimeImmutable('+3 day'));
+
+        $output = $api->createTicket($this->eppnActive, $ticket);
+
+        $this->assertInstanceOf(Ticket::class, $output);
+    }
+
+    public function testApiGetTicketMvs(): void
+    {
+        $api = ApiFactory::createApi();
+
+        $output = $api->getTicket($this->eppnActive, $this->ticketIdMvs);
 
         $this->assertInstanceOf(Ticket::class, $output);
 
         if ($output) {
-            $this->assertSame($this->ticketId, $output->getId());
+            $this->assertSame($this->ticketIdMvs, $output->getId());
+        }
+    }
+
+    public function testApiGetTicketEdd(): void
+    {
+        $api = ApiFactory::createApi();
+
+        $output = $api->getTicket($this->eppnActive, $this->ticketIdEdd);
+
+        $this->assertInstanceOf(Ticket::class, $output);
+
+        if ($output) {
+            $this->assertSame($this->ticketIdMvs, $output->getId());
         }
     }
 
@@ -466,7 +592,7 @@ final class ApiTest extends TestCase
     {
         $api = ApiFactory::createApi();
 
-        $output = $api->getMessages($this->eppnActive, $this->ticketId);
+        $output = $api->getMessages($this->eppnActive, $this->ticketIdMvs);
 
         $this->assertInstanceOf(MessageCollection::class, $output);
     }
@@ -477,7 +603,7 @@ final class ApiTest extends TestCase
 
         $message = new RequestModel\Message($this->messageText);
 
-        $output = $api->createMessage($this->eppnActive, $this->ticketId, $message);
+        $output = $api->createMessage($this->eppnActive, $this->ticketIdMvs, $message);
 
         $this->assertIsBool($output);
         $this->assertEquals(true, $output);
@@ -489,7 +615,7 @@ final class ApiTest extends TestCase
 
         $messages = new RequestModel\Messages(true);
 
-        $output = $api->updateMessages($this->eppnActive, $this->ticketId, $messages);
+        $output = $api->updateMessages($this->eppnActive, $this->ticketIdMvs, $messages);
 
         $this->assertIsBool($output);
         $this->assertEquals(true, $output);
