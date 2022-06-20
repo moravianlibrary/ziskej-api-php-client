@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mzk\ZiskejApi;
 
+use Mzk\ZiskejApi\Enum\TicketType;
 use Mzk\ZiskejApi\ResponseModel\Library;
 use Mzk\ZiskejApi\ResponseModel\LibraryCollection;
 use Mzk\ZiskejApi\ResponseModel\MessageCollection;
@@ -260,7 +261,7 @@ final class Api
     }
 
     /**
-     * Get tickets for reader with details
+     * Get tickets (MVS and EDD) for reader with details
      * GET /readers/:eppn/tickets
      *
      * @param string $eppn
@@ -279,6 +280,98 @@ final class Api
                     ':eppn' => $eppn,
                 ],
                 [
+                    'expand' => 'detail',
+                    'include_closed' => 1,
+                ]
+            )
+        );
+
+        switch ($apiResponse->getStatusCode()) {
+            case 200:
+                $contents = $apiResponse->getBody()->getContents();
+                $array = json_decode($contents, true);
+
+                if (isset($array['items']) && is_array($array['items'])) {
+                    $tickets = TicketsCollection::fromArray($array['items']);
+                } else {
+                    $tickets = new TicketsCollection();
+                }
+                break;
+            default:
+                throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
+                break;
+        }
+
+        return $tickets;
+    }
+
+    /**
+     * Get MVS type tickets for reader with details
+     * GET /readers/:eppn/tickets
+     *
+     * @param string $eppn
+     * @return \Mzk\ZiskejApi\ResponseModel\TicketsCollection List of tickets with details
+     *
+     * @throws \Http\Client\Exception
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     */
+    public function getTicketsMvs(string $eppn): TicketsCollection
+    {
+        $apiResponse = $this->apiClient->sendApiRequest(
+            new ApiRequest(
+                'GET',
+                '/readers/:eppn/tickets',
+                [
+                    ':eppn' => $eppn,
+                ],
+                [
+                    'ticket_type' => TicketType::MVS,
+                    'expand' => 'detail',
+                    'include_closed' => 1,
+                ]
+            )
+        );
+
+        switch ($apiResponse->getStatusCode()) {
+            case 200:
+                $contents = $apiResponse->getBody()->getContents();
+                $array = json_decode($contents, true);
+
+                if (isset($array['items']) && is_array($array['items'])) {
+                    $tickets = TicketsCollection::fromArray($array['items']);
+                } else {
+                    $tickets = new TicketsCollection();
+                }
+                break;
+            default:
+                throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
+                break;
+        }
+
+        return $tickets;
+    }
+
+    /**
+     * Get EDD type tickets for reader with details
+     * GET /readers/:eppn/tickets
+     *
+     * @param string $eppn
+     * @return \Mzk\ZiskejApi\ResponseModel\TicketsCollection List of tickets with details
+     *
+     * @throws \Http\Client\Exception
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     */
+    public function getTicketsEdd(string $eppn): TicketsCollection
+    {
+        $apiResponse = $this->apiClient->sendApiRequest(
+            new ApiRequest(
+                'GET',
+                '/readers/:eppn/tickets',
+                [
+                    ':eppn' => $eppn,
+                ],
+                [
+                    'ticket_type' => TicketType::EDD,
                     'expand' => 'detail',
                     'include_closed' => 1,
                 ]
