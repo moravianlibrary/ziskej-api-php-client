@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Mzk\ZiskejApi;
 
+use Mzk\ZiskejApi\Enum\TicketEddSubtype;
 use Mzk\ZiskejApi\Enum\TicketType;
+use Mzk\ZiskejApi\ResponseModel\EddEstimate;
 use Mzk\ZiskejApi\ResponseModel\Library;
 use Mzk\ZiskejApi\ResponseModel\LibraryCollection;
 use Mzk\ZiskejApi\ResponseModel\MessageCollection;
@@ -628,6 +630,41 @@ final class Api
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
                 break;
+        }
+    }
+
+    /**
+     * Get EDD fee estimate
+     * @param int $number_of_pages
+     * @param string $edd_subtype
+     * @return \Mzk\ZiskejApi\ResponseModel\EddEstimate
+     *
+     * @throws \Consistence\Enum\InvalidEnumValueException
+     * @throws \Http\Client\Exception
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     */
+    public function getEddEstimateFee(int $number_of_pages, string $edd_subtype): EddEstimate
+    {
+        TicketEddSubtype::checkValue($edd_subtype);
+
+        $apiRequest = new ApiRequest(
+            'GET',
+            '/service/edd/estimate',
+            [],
+            [
+                'number_of_pages' => $number_of_pages,
+                'edd_subtype' => $edd_subtype,
+            ]
+        );
+
+        $apiResponse = $this->apiClient->sendApiRequest($apiRequest);
+
+        switch ($apiResponse->getStatusCode()) {
+            case 200:
+                $contents = $apiResponse->getBody()->getContents();
+                return EddEstimate::fromArray(json_decode($contents, true));
+            default:
+                throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
         }
     }
 }

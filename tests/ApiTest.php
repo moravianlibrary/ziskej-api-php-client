@@ -11,6 +11,7 @@ use Http\Message\Authentication\Bearer;
 use Monolog\Logger;
 use Mzk\ZiskejApi\Enum\TicketEddDocDataSource;
 use Mzk\ZiskejApi\Enum\TicketEddSubtype;
+use Mzk\ZiskejApi\ResponseModel\EddEstimate;
 use Mzk\ZiskejApi\ResponseModel\LibraryCollection;
 use Mzk\ZiskejApi\ResponseModel\MessageCollection;
 use Mzk\ZiskejApi\ResponseModel\Ticket;
@@ -621,5 +622,23 @@ final class ApiTest extends TestCase
 
         $this->assertIsBool($output);
         $this->assertEquals(true, $output);
+    }
+
+    /* ESTIMATE */
+
+    /**
+     * @throws \Http\Client\Exception
+     * @throws \Consistence\Enum\InvalidEnumValueException
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     */
+    public function testApiGetServiceEddEstimate(): void
+    {
+        $api = ApiFactory::createApi();
+
+        $output = $api->getEddEstimateFee(10, TicketEddSubtype::ARTICLE);
+
+        $this->assertInstanceOf(EddEstimate::class, $output);
+        $this->assertEquals(true, $output->isValid());
+        $this->assertEquals(60, $output->getFee());
     }
 }
