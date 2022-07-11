@@ -8,6 +8,7 @@ abstract class StatusName extends BaseEnum
 {
     public const CREATED = 'created';
     public const PAID = 'paid';
+    public const UUPAID = 'unpaid';
     public const ACCEPTED = 'accepted';
     public const PREPARED = 'prepared';
     public const LENT = 'lent';
