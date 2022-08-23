@@ -221,6 +221,8 @@ class Ticket
      */
     private ?string $paymentUrl = null;
 
+    private ?string $downloadUrl = null;
+
     /**
      * @throws \Consistence\Enum\InvalidEnumValueException
      */
@@ -287,6 +289,7 @@ class Ticket
         $ticket->docNote = PrimitiveTypes::extractStringOrNull($data, 'doc_note', true);
         $ticket->paymentId = PrimitiveTypes::extractStringOrNull($data, 'payment_id', true);
         $ticket->paymentUrl = PrimitiveTypes::extractStringOrNull($data, 'payment_url', true);
+        $ticket->downloadUrl = PrimitiveTypes::extractStringOrNull($data, 'edd_reader_url', true);
         $ticket->pagesFrom = PrimitiveTypes::extractIntOrNull($data, 'pages_from', true);
         $ticket->pagesTo = PrimitiveTypes::extractIntOrNull($data, 'pages_to', true);
         return $ticket;
@@ -458,5 +461,13 @@ class Ticket
     public function getPaymentUrl(): ?string
     {
         return $this->paymentUrl;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDownloadUrl(): ?string
+    {
+        return $this->downloadUrl;
     }
 }
