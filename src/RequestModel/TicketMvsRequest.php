@@ -50,7 +50,7 @@ class TicketMvsRequest extends TicketRequest
      *
      * @param string $documentId
      * @param \DateTimeImmutable|null $dateRequested
-     * @param array $documentAltIds
+     * @param string[] $documentAltIds
      * @param string|null $readerNote
      */
     public function __construct(
@@ -66,7 +66,7 @@ class TicketMvsRequest extends TicketRequest
     }
 
     /**
-     * @return array
+     * @return string[]
      */
     public function toArray(): array
     {

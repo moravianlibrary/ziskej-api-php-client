@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Mzk\ZiskejApi;
 
-use const E_ALL;
-
 use function error_reporting;
+
+use const E_ALL;
 
 require __DIR__ . '/../vendor/autoload.php';
 

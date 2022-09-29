@@ -269,7 +269,9 @@ class Ticket
             $ticket->statusHistory[] = Status::fromArray($statusHistory);
         }
         $ticket->statusLabel = PrimitiveTypes::extractStringOrNull($data, 'status_label', true);
-        $ticket->updatedAt = PrimitiveTypes::extractStringOrNull($data, 'updated_datetime', true) ? new DateTimeImmutable(PrimitiveTypes::extractStringOrNull($data, 'updated_datetime', true)) : null;
+        $ticket->updatedAt = PrimitiveTypes::extractStringOrNull($data, 'updated_datetime', true)
+            ? new DateTimeImmutable(PrimitiveTypes::extractStringOrNull($data, 'updated_datetime', true))
+            : null;
         $ticket->requestedAt = DatesImmutable::extractOrNull($data, 'date_requested', true);
         $ticket->returnAt = DatesImmutable::extractOrNull($data, 'date_return', true);
         $ticket->countMessages = PrimitiveTypes::extractIntOrNull($data, 'count_messages', true) ?? 0;

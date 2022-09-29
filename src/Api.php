@@ -78,10 +78,8 @@ final class Api
                 } else {
                     return new LibraryCollection();
                 }
-                break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
     }
 
@@ -117,10 +115,8 @@ final class Api
                 } else {
                     return new LibraryCollection();
                 }
-                break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
     }
 
@@ -157,12 +153,10 @@ final class Api
             case 200:
                 $contents = $apiResponse->getBody()->getContents();
                 return ResponseModel\Reader::fromArray(json_decode($contents, true));
-                break;
             case 404:
                 return null;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
     }
 
@@ -213,10 +207,8 @@ final class Api
             case 201:
             case 204:
                 return $this->getReader($eppn);
-                break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
     }
 
@@ -256,7 +248,6 @@ final class Api
                 break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
 
         return (array)$return;
@@ -301,7 +292,6 @@ final class Api
                 break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
 
         return $tickets;
@@ -347,7 +337,6 @@ final class Api
                 break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
 
         return $tickets;
@@ -393,7 +382,6 @@ final class Api
                 break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
 
         return $tickets;
@@ -436,10 +424,8 @@ final class Api
                 }
 
                 return $this->getTicket($eppn, $array['id']);
-                break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
     }
 
@@ -471,12 +457,10 @@ final class Api
             case 200:
                 $contents = $apiResponse->getBody()->getContents();
                 return Ticket::fromArray(json_decode($contents, true));
-                break;
             case 404:
                 return null;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
     }
 
@@ -507,13 +491,10 @@ final class Api
         switch ($apiResponse->getStatusCode()) {
             case 200:
                 return true;
-                break;
             case 422:
                 return false;
-                break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
     }
 
@@ -555,7 +536,6 @@ final class Api
                 break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
 
         return $collection;
@@ -590,10 +570,8 @@ final class Api
         switch ($apiResponse->getStatusCode()) {
             case 201:
                 return true;
-                break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
     }
 
@@ -626,10 +604,8 @@ final class Api
         switch ($apiResponse->getStatusCode()) {
             case 200:
                 return true;
-                break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
     }
 

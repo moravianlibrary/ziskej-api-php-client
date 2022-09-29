@@ -64,6 +64,9 @@ final class ApiTest extends TestCase
      */
     private $ticketIdMvs = '160455000cf24524';
 
+    /**
+     * @var string
+     */
     private $ticketIdEdd = '160455000cf24524';
 
     /**

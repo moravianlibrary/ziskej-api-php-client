@@ -284,6 +284,10 @@ class TicketEddRequest extends TicketRequest
         return $return;
     }
 
+    /**
+     * @param string[] $documentAltIds
+     * @return void
+     */
     public function setDocumentAltIds(array $documentAltIds): void
     {
         $this->documentAltIds = $documentAltIds;

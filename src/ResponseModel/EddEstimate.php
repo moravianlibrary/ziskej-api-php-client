@@ -29,6 +29,10 @@ class EddEstimate
         $this->isValid = $is_valid;
     }
 
+    /**
+     * @param string[] $data
+     * @return \Mzk\ZiskejApi\ResponseModel\EddEstimate
+     */
     public static function fromArray(array $data): EddEstimate
     {
         return new self(
