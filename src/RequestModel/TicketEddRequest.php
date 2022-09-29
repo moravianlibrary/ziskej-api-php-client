@@ -217,64 +217,27 @@ class TicketEddRequest extends TicketRequest
             'doc_id' => $this->documentId,
         ];
 
-        if (!empty($this->documentAltIds)) {
-            $return['doc_alt_ids'] = $this->documentAltIds;
-        }
-
-        if (!empty($this->docIdIn)) {
-            $return['doc_id_in'] = $this->docIdIn;
-        }
-
-        if (!empty($this->docNumberYear)) {
-            $return['doc_number_year'] = $this->docNumberYear;
-        }
-
-        if (!empty($this->docNumberPyear)) {
-            $return['doc_number_pyear'] = $this->docNumberPyear;
-        }
-
-        if (!empty($this->docNumberPnumber)) {
-            $return['doc_number_pnumber'] = $this->docNumberPnumber;
-        }
-
-        if (!empty($this->docVolume)) {
-            $return['doc_volume'] = $this->docVolume;
-        }
-
-        if (!empty($this->pagesFrom)) {
-            $return['pages_from'] = $this->pagesFrom;
-        }
-
-        if (!empty($this->pagesTo)) {
-            $return['pages_to'] = $this->pagesTo;
-        }
-
-        if (!empty($this->docAuthor)) {
-            $return['doc_author'] = $this->docAuthor;
-        }
-
-        if (!empty($this->docIssuer)) {
-            $return['doc_issuer'] = $this->docIssuer;
-        }
-
-        if (!empty($this->docISSN)) {
-            $return['doc_issn'] = $this->docISSN;
-        }
-
-        if (!empty($this->docISBN)) {
-            $return['doc_isbn'] = $this->docISBN;
-        }
-
-        if (!empty($this->docCitation)) {
-            $return['doc_citation'] = $this->docCitation;
-        }
-
-        if (!empty($this->docNote)) {
-            $return['doc_note'] = $this->docNote;
-        }
-
-        if (!empty($this->readerNote)) {
-            $return['reader_note'] = $this->readerNote;
+        $nullable = [
+            'doc_alt_ids' => 'documentAltIds',
+            'doc_id_in' => 'docIdIn',
+            'doc_number_year' => 'docNumberYear',
+            'doc_number_pyear' => 'docNumberPyear',
+            'doc_number_pnumber' => 'docNumberPnumber',
+            'doc_volume' => 'docVolume',
+            'pages_from' => 'pagesFrom',
+            'pages_to' => 'pagesTo',
+            'doc_author' => 'docAuthor',
+            'doc_issuer' => 'docIssuer',
+            'doc_issn' => 'docISSN',
+            'doc_isbn' => 'docISBN',
+            'doc_citation' => 'docCitation',
+            'doc_note' => 'docNote',
+            'reader_note' => 'readerNote',
+        ];
+        foreach ($nullable as $key => $property) {
+            if ($this->$property !== null) {
+                $return[$key] = $this->$property;
+            }
         }
 
         if (!empty($this->dateRequested)) {
