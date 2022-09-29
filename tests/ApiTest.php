@@ -131,8 +131,8 @@ final class ApiTest extends TestCase
     public function testApiGetLibrariesAll(): void
     {
         $guzzleClient = Client::createWithConfig([
-                                                     'connect_timeout' => 10,
-                                                 ]);
+            'connect_timeout' => 10,
+        ]);
 
         $apiClient = new ApiClient($guzzleClient, $this->baseUrl, null, $this->logger);
         $api = new Api($apiClient);
@@ -146,8 +146,8 @@ final class ApiTest extends TestCase
     public function testApiGetLibrariesActive(): void
     {
         $guzzleClient = Client::createWithConfig([
-                                                     'connect_timeout' => 10,
-                                                 ]);
+            'connect_timeout' => 10,
+        ]);
 
         $apiClient = new ApiClient($guzzleClient, $this->baseUrl, null, $this->logger);
         $api = new Api($apiClient);
@@ -255,7 +255,6 @@ final class ApiTest extends TestCase
 //            $this->assertSame(false, $reader->isActive());
 //        }
 //    }
-
 
     public function testApiCreateReader200(): void
     {
