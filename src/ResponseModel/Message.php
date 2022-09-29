@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\ResponseModel;
 
@@ -7,26 +9,25 @@ use SmartEmailing\Types\PrimitiveTypes;
 
 class Message
 {
-
     /**
      * @var string
      */
-    private $sender;
+    private string $sender;
 
     /**
      * @var \DateTimeImmutable
      */
-    private $createdAt;
+    private DateTimeImmutable $createdAt;
 
     /**
      * @var bool
      */
-    private $read;
+    private bool $read;
 
     /**
      * @var string
      */
-    private $text;
+    private string $text;
 
     /**
      * Message constructor.
@@ -98,5 +99,4 @@ class Message
     {
         $this->text = $text;
     }
-
 }

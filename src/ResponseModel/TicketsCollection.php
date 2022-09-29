@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\ResponseModel;
 
@@ -6,13 +8,12 @@ use SmartEmailing\Types\Arrays;
 
 class TicketsCollection
 {
-
     //@todo rename to TicketCollection
 
     /**
      * @var \Mzk\ZiskejApi\ResponseModel\Ticket[]
      */
-    private $items = [];
+    private array $items = [];
 
     /**
      * @param string[][] $data
@@ -42,5 +43,4 @@ class TicketsCollection
     {
         return $this->items;
     }
-
 }

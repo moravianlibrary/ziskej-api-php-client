@@ -1,7 +1,10 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\ResponseModel;
 
+use Mzk\ZiskejApi\Enum\StatusName;
 use Mzk\ZiskejApi\TestCase;
 
 final class StatusTest extends TestCase
@@ -10,9 +13,9 @@ final class StatusTest extends TestCase
     /**
      * @var string[]
      */
-    private $input = [
+    private array $input = [
         "date" => "2020-03-11",
-        "id" => "created",
+        "id" => StatusName::CREATED,
     ];
 
     public function testCreateFromArray(): void
@@ -23,4 +26,13 @@ final class StatusTest extends TestCase
         $this->assertEquals($this->input['id'], $status->getName());
     }
 
+    public function testWrongStatusName(): void
+    {
+        $this->expectException(\Consistence\Enum\InvalidEnumValueException::class);
+
+        Status::fromArray([
+                              "date" => "2020-03-11",
+                              "id" => 'wrong status name',
+                          ]);
+    }
 }

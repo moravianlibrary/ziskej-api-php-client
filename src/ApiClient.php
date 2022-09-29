@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mzk\ZiskejApi;
 
@@ -14,6 +16,7 @@ use Http\Discovery\UriFactoryDiscovery;
 use Http\Message\Authentication;
 use Http\Message\MultipartStream\MultipartStreamBuilder;
 use Psr\Log\LoggerInterface;
+
 use function GuzzleHttp\Psr7\stream_for;
 
 final class ApiClient
@@ -29,22 +32,22 @@ final class ApiClient
     /**
      * @var \Http\Client\HttpClient
      */
-    private $httpClient;
+    private HttpClient $httpClient;
 
     /**
      * @var \Http\Message\Authentication|null
      */
-    private $authentication = null;
+    private ?Authentication $authentication = null;
 
     /**
      * @var \Psr\Log\LoggerInterface|null
      */
-    private $logger = null;
+    private ?LoggerInterface $logger = null;
 
     /**
      * @var mixed[]
      */
-    private $plugins = [];
+    private array $plugins = [];
 
     public function __construct(
         ?HttpClient $httpClient,
@@ -129,5 +132,4 @@ final class ApiClient
 
         return new ApiResponse($response);
     }
-
 }

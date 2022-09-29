@@ -1,16 +1,17 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\ResponseModel;
 
 class Library
 {
-
     /**
      * Sigla code
      *
      * @var string
      */
-    private $sigla;
+    private string $sigla;
 
     public function __construct(string $sigla)
     {
@@ -21,5 +22,4 @@ class Library
     {
         return $this->sigla;
     }
-
 }

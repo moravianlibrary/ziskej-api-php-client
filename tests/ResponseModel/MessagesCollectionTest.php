@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\ResponseModel;
 
@@ -40,5 +42,4 @@ final class MessagesCollectionTest extends TestCase
         $this->assertCount(2, $messages);
         //@todo more tests
     }
-
 }

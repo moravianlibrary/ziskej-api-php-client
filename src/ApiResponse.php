@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mzk\ZiskejApi;
 
@@ -11,7 +13,7 @@ class ApiResponse
     /**
      * @var \Psr\Http\Message\ResponseInterface
      */
-    private $response;
+    private ResponseInterface $response;
 
     public function __construct(ResponseInterface $response)
     {
@@ -37,5 +39,4 @@ class ApiResponse
     {
         return $this->response->getBody();
     }
-
 }

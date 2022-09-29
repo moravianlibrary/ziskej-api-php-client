@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\ResponseModel;
 
@@ -6,11 +8,10 @@ use SmartEmailing\Types\Arrays;
 
 class MessageCollection
 {
-
     /**
      * @var \Mzk\ZiskejApi\ResponseModel\Message[]
      */
-    private $items = [];
+    private array $items = [];
 
     /**
      * @param string[][] $data
@@ -40,5 +41,4 @@ class MessageCollection
     {
         return $this->items;
     }
-
 }

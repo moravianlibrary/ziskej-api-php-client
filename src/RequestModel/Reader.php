@@ -1,54 +1,59 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\RequestModel;
 
 class Reader
 {
-
     /**
      * Reader first name
      * @var string
      */
-    private $firstName;
+    private string $firstName;
 
     /**
      * Reader last name
+     *
      * @var string
      */
-    private $lastName;
+    private string $lastName;
 
     /**
      * Reader email address
+     *
      * @var string //@todo refactor to email object
      */
-    private $email;
+    private string $email;
 
     /**
      * Library sigla
+     *
      * @var string
      */
-    private $sigla;
+    private string $sigla;
 
     /**
      * Send notifications
+     *
      * @var bool
      */
-    private $isNotificationEnabled = true;  // always true
+    private bool $isNotificationEnabled = true;  // always true
 
     /**
      * @var bool
      */
-    private $isGdprReg;
+    private bool $isGdprReg;
 
     /**
      * @var bool
      */
-    private $isGdprData;
+    private bool $isGdprData;
 
     /**
      * @var string|null
      */
-    private $readerLibraryId;
+    private ?string $readerLibraryId;
 
     /**
      * Reader constructor.
@@ -142,5 +147,4 @@ class Reader
     {
         return $this->readerLibraryId;
     }
-
 }

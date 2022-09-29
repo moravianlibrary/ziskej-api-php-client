@@ -1,7 +1,12 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mzk\ZiskejApi;
 
+use Mzk\ZiskejApi\Enum\TicketEddSubtype;
+use Mzk\ZiskejApi\Enum\TicketType;
+use Mzk\ZiskejApi\ResponseModel\EddEstimate;
 use Mzk\ZiskejApi\ResponseModel\Library;
 use Mzk\ZiskejApi\ResponseModel\LibraryCollection;
 use Mzk\ZiskejApi\ResponseModel\MessageCollection;
@@ -14,7 +19,7 @@ final class Api
     /**
      * @var \Mzk\ZiskejApi\ApiClient
      */
-    private $apiClient;
+    private ApiClient $apiClient;
 
     public function __construct(ApiClient $apiClient)
     {
@@ -73,10 +78,8 @@ final class Api
                 } else {
                     return new LibraryCollection();
                 }
-                break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
     }
 
@@ -112,10 +115,8 @@ final class Api
                 } else {
                     return new LibraryCollection();
                 }
-                break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
     }
 
@@ -152,12 +153,10 @@ final class Api
             case 200:
                 $contents = $apiResponse->getBody()->getContents();
                 return ResponseModel\Reader::fromArray(json_decode($contents, true));
-                break;
             case 404:
                 return null;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
     }
 
@@ -187,7 +186,6 @@ final class Api
      * @return \Mzk\ZiskejApi\ResponseModel\Reader|null
      *
      * @throws \Http\Client\Exception
-     * @throws \Mzk\ZiskejApi\Exception\ApiInputException
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
     public function updateReader(string $eppn, RequestModel\Reader $reader): ?ResponseModel\Reader
@@ -209,10 +207,8 @@ final class Api
             case 201:
             case 204:
                 return $this->getReader($eppn);
-                break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
     }
 
@@ -252,14 +248,13 @@ final class Api
                 break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
 
         return (array)$return;
     }
 
     /**
-     * Get tickets for reader with details
+     * Get tickets (MVS and EDD) for reader with details
      * GET /readers/:eppn/tickets
      *
      * @param string $eppn
@@ -297,7 +292,96 @@ final class Api
                 break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
+        }
+
+        return $tickets;
+    }
+
+    /**
+     * Get MVS type tickets for reader with details
+     * GET /readers/:eppn/tickets
+     *
+     * @param string $eppn
+     * @return \Mzk\ZiskejApi\ResponseModel\TicketsCollection List of tickets with details
+     *
+     * @throws \Http\Client\Exception
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     */
+    public function getTicketsMvs(string $eppn): TicketsCollection
+    {
+        $apiResponse = $this->apiClient->sendApiRequest(
+            new ApiRequest(
+                'GET',
+                '/readers/:eppn/tickets',
+                [
+                    ':eppn' => $eppn,
+                ],
+                [
+                    'ticket_type' => TicketType::MVS,
+                    'expand' => 'detail',
+                    'include_closed' => 1,
+                ]
+            )
+        );
+
+        switch ($apiResponse->getStatusCode()) {
+            case 200:
+                $contents = $apiResponse->getBody()->getContents();
+                $array = json_decode($contents, true);
+
+                if (isset($array['items']) && is_array($array['items'])) {
+                    $tickets = TicketsCollection::fromArray($array['items']);
+                } else {
+                    $tickets = new TicketsCollection();
+                }
                 break;
+            default:
+                throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
+        }
+
+        return $tickets;
+    }
+
+    /**
+     * Get EDD type tickets for reader with details
+     * GET /readers/:eppn/tickets
+     *
+     * @param string $eppn
+     * @return \Mzk\ZiskejApi\ResponseModel\TicketsCollection List of tickets with details
+     *
+     * @throws \Http\Client\Exception
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     */
+    public function getTicketsEdd(string $eppn): TicketsCollection
+    {
+        $apiResponse = $this->apiClient->sendApiRequest(
+            new ApiRequest(
+                'GET',
+                '/readers/:eppn/tickets',
+                [
+                    ':eppn' => $eppn,
+                ],
+                [
+                    'ticket_type' => TicketType::EDD,
+                    'expand' => 'detail',
+                    'include_closed' => 1,
+                ]
+            )
+        );
+
+        switch ($apiResponse->getStatusCode()) {
+            case 200:
+                $contents = $apiResponse->getBody()->getContents();
+                $array = json_decode($contents, true);
+
+                if (isset($array['items']) && is_array($array['items'])) {
+                    $tickets = TicketsCollection::fromArray($array['items']);
+                } else {
+                    $tickets = new TicketsCollection();
+                }
+                break;
+            default:
+                throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
         }
 
         return $tickets;
@@ -308,14 +392,14 @@ final class Api
      * POST /readers/:eppn/tickets
      *
      * @param string $eppn
-     * @param \Mzk\ZiskejApi\RequestModel\Ticket $ticket
+     * @param \Mzk\ZiskejApi\RequestModel\TicketRequest $ticket
      * @return \Mzk\ZiskejApi\ResponseModel\Ticket|null Created Ticket or null
      *
      * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiException
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      */
-    public function createTicket(string $eppn, RequestModel\Ticket $ticket): ?Ticket
+    public function createTicket(string $eppn, RequestModel\TicketRequest $ticket): ?Ticket
     {
         $apiRequest = new ApiRequest(
             'POST',
@@ -335,15 +419,13 @@ final class Api
 
                 if (empty($array['id'])) {
                     throw new \Mzk\ZiskejApi\Exception\ApiException(
-                        'Ziskej API error: API did not return "id" parameter.'
+                        'Ziskej API error: API did not return "id" parameter.'  //@todo jina zprava
                     );
                 }
 
                 return $this->getTicket($eppn, $array['id']);
-                break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
     }
 
@@ -375,12 +457,10 @@ final class Api
             case 200:
                 $contents = $apiResponse->getBody()->getContents();
                 return Ticket::fromArray(json_decode($contents, true));
-                break;
             case 404:
                 return null;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
     }
 
@@ -411,13 +491,10 @@ final class Api
         switch ($apiResponse->getStatusCode()) {
             case 200:
                 return true;
-                break;
             case 422:
                 return false;
-                break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
     }
 
@@ -459,7 +536,6 @@ final class Api
                 break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
 
         return $collection;
@@ -494,10 +570,8 @@ final class Api
         switch ($apiResponse->getStatusCode()) {
             case 201:
                 return true;
-                break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
     }
 
@@ -530,11 +604,43 @@ final class Api
         switch ($apiResponse->getStatusCode()) {
             case 200:
                 return true;
-                break;
             default:
                 throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
-                break;
         }
     }
 
+    /**
+     * Get EDD fee estimate
+     * @param int $number_of_pages
+     * @param string $edd_subtype
+     * @return \Mzk\ZiskejApi\ResponseModel\EddEstimate
+     *
+     * @throws \Consistence\Enum\InvalidEnumValueException
+     * @throws \Http\Client\Exception
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     */
+    public function getEddEstimateFee(int $number_of_pages, string $edd_subtype): EddEstimate
+    {
+        TicketEddSubtype::checkValue($edd_subtype);
+
+        $apiRequest = new ApiRequest(
+            'GET',
+            '/service/edd/estimate',
+            [],
+            [
+                'number_of_pages' => $number_of_pages,
+                'edd_subtype' => $edd_subtype,
+            ]
+        );
+
+        $apiResponse = $this->apiClient->sendApiRequest($apiRequest);
+
+        switch ($apiResponse->getStatusCode()) {
+            case 200:
+                $contents = $apiResponse->getBody()->getContents();
+                return EddEstimate::fromArray(json_decode($contents, true));
+            default:
+                throw new \Mzk\ZiskejApi\Exception\ApiResponseException($apiResponse);
+        }
+    }
 }

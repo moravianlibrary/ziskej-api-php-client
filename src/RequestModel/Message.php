@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\RequestModel;
 
@@ -9,7 +11,7 @@ class Message
      * Message text
      * @var string
      */
-    private $text;
+    private string $text;
 
     public function __construct(string $text)
     {
@@ -30,5 +32,4 @@ class Message
     {
         return $this->text;
     }
-
 }

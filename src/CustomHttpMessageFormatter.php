@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mzk\ZiskejApi;
 
@@ -18,7 +20,7 @@ class CustomHttpMessageFormatter implements Formatter
      *
      * @var int|null
      */
-    private $maxBodyLength;
+    private ?int $maxBodyLength;
 
     public function __construct(?int $maxBodyLength = 1000)
     {
@@ -28,7 +30,7 @@ class CustomHttpMessageFormatter implements Formatter
     /**
      * {@inheritdoc}
      */
-    public function formatRequest(RequestInterface $request)
+    public function formatRequest(RequestInterface $request): string
     {
         $message = sprintf(
             "%s %s HTTP/%s\n",
@@ -38,7 +40,7 @@ class CustomHttpMessageFormatter implements Formatter
         );
 
         foreach ($request->getHeaders() as $name => $values) {
-            $message .= $name.': '.implode(', ', $values)."\n";
+            $message .= $name . ': ' . implode(', ', $values) . "\n";
         }
 
         return $this->addBody($request, $message);
@@ -47,7 +49,7 @@ class CustomHttpMessageFormatter implements Formatter
     /**
      * {@inheritdoc}
      */
-    public function formatResponse(ResponseInterface $response)
+    public function formatResponse(ResponseInterface $response): string
     {
         $message = sprintf(
             "HTTP/%s %s %s\n",
@@ -57,7 +59,7 @@ class CustomHttpMessageFormatter implements Formatter
         );
 
         foreach ($response->getHeaders() as $name => $values) {
-            $message .= $name.': '.implode(', ', $values)."\n";
+            $message .= $name . ': ' . implode(', ', $values) . "\n";
         }
 
         return $this->addBody($response, $message);
@@ -76,20 +78,19 @@ class CustomHttpMessageFormatter implements Formatter
         $stream = $request->getBody();
         if (!$stream->isSeekable() || $this->maxBodyLength === 0) {
             // Do not read the stream
-            return $message."\n";
+            return $message . "\n";
         }
 
         $message = preg_replace('/Authorization: .*/', 'Authorization: [...]', $message);
 
         if ($this->maxBodyLength === null) {
-            $message .= "\n".$stream->__toString();
+            $message .= "\n" . $stream->__toString();
         } else {
-            $message .= "\n".mb_substr($stream->__toString(), 0, $this->maxBodyLength);
+            $message .= "\n" . mb_substr($stream->__toString(), 0, $this->maxBodyLength);
         }
 
         $stream->rewind();
 
         return $message;
     }
-
 }
