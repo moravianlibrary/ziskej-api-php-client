@@ -585,7 +585,7 @@ final class ApiTest extends TestCase
         $this->assertInstanceOf(Ticket::class, $output);
 
         if ($output) {
-            $this->assertSame($this->ticketIdMvs, $output->getId());
+            $this->assertSame($this->ticketIdEdd, $output->getId());
         }
     }
 
