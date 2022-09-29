@@ -89,4 +89,68 @@ class TicketMvsRequest extends TicketRequest
 
         return $return;
     }
+
+    /**
+     * @return string
+     */
+    public function getDocumentId(): string
+    {
+        return $this->documentId;
+    }
+
+    /**
+     * @param string $documentId
+     */
+    public function setDocumentId(string $documentId): void
+    {
+        $this->documentId = $documentId;
+    }
+
+    /**
+     * @return \DateTimeImmutable|null
+     */
+    public function getDateRequested(): ?DateTimeImmutable
+    {
+        return $this->dateRequested;
+    }
+
+    /**
+     * @param \DateTimeImmutable|null $dateRequested
+     */
+    public function setDateRequested(?DateTimeImmutable $dateRequested): void
+    {
+        $this->dateRequested = $dateRequested;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getDocumentAltIds(): array
+    {
+        return $this->documentAltIds;
+    }
+
+    /**
+     * @param string[] $documentAltIds
+     */
+    public function setDocumentAltIds(array $documentAltIds): void
+    {
+        $this->documentAltIds = $documentAltIds;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getNote(): ?string
+    {
+        return $this->readerNote;
+    }
+
+    /**
+     * @param string|null $readerNote
+     */
+    public function setNote(?string $readerNote): void
+    {
+        $this->readerNote = $readerNote;
+    }
 }
