@@ -7,9 +7,8 @@ namespace Mzk\ZiskejApi;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
-class ApiResponse
+final class ApiResponse
 {
-
     /**
      * @var \Psr\Http\Message\ResponseInterface
      */

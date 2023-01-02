@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\Exception;
 
-class ApiInputException extends \Exception
-{
+use Exception;
 
+final class ApiInputException extends Exception
+{
 }

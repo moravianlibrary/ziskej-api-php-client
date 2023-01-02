@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\RequestModel;
 
-class Message
+final class Message
 {
-
     /**
      * Message text
+     *
      * @var string
      */
     private string $text;
@@ -19,7 +19,7 @@ class Message
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public function toArray(): array
     {

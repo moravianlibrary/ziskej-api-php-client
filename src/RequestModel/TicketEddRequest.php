@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\RequestModel;
 
+use Consistence\InvalidArgumentTypeException;
 use DateTimeImmutable;
 use Mzk\ZiskejApi\Enum\TicketEddDocDataSource;
 use Mzk\ZiskejApi\Enum\TicketEddSubtype;
 use Mzk\ZiskejApi\Enum\TicketType;
 
-class TicketEddRequest extends TicketRequest
+final class TicketEddRequest extends TicketRequest
 {
-
     /**
      * Ticket type
      *
@@ -23,6 +23,7 @@ class TicketEddRequest extends TicketRequest
      * Typ vytvoření objednávky (automatická, manuální)
      *
      * @var string
+     *
      * @see \Mzk\ZiskejApi\Enum\TicketEddDocDataSource
      */
     protected string $ticketDocDataSource;
@@ -31,6 +32,7 @@ class TicketEddRequest extends TicketRequest
      * article (pro článek), selection (pro výňatek z monografie a periodika)
      *
      * @var string
+     *
      * @see \Mzk\ZiskejApi\Enum\TicketEddSubtype
      */
     protected string $eddSubtype;
@@ -52,19 +54,20 @@ class TicketEddRequest extends TicketRequest
     /**
      * Document ID
      *
-     * @var ?string
+     * @var string
      */
     protected string $documentId;
 
     /**
      * Alternative document IDs
      *
-     * @var string[]
+     * @var array<string>
      */
     protected array $documentAltIds = [];
 
     /**
-     * ???
+     * Parent document ID
+     *
      * @var string|null
      */
     protected ?string $docIdIn = null;
@@ -175,6 +178,7 @@ class TicketEddRequest extends TicketRequest
      * @param string $docTitleIn
      * @param string $docTitle
      * @param string|null $documentId
+     *
      * @throws \Consistence\Enum\InvalidEnumValueException
      * @throws \Consistence\InvalidArgumentTypeException
      */
@@ -190,7 +194,7 @@ class TicketEddRequest extends TicketRequest
 
         if ($ticketDocDataSource === TicketEddDocDataSource::AUTO) {
             if (!is_string($documentId)) {
-                throw new \Consistence\InvalidArgumentTypeException($documentId, 'string');
+                throw new InvalidArgumentTypeException($documentId, 'string');
             }
         }
 
@@ -204,7 +208,7 @@ class TicketEddRequest extends TicketRequest
     /**
      * Convert object data to array for API
      *
-     * @return string[]
+     * @return array<string>
      */
     public function toArray(): array
     {
@@ -240,7 +244,7 @@ class TicketEddRequest extends TicketRequest
             }
         }
 
-        if (!empty($this->dateRequested)) {
+        if ($this->dateRequested !== null) {
             $return['date_requested'] = $this->dateRequested->format('Y-m-d');
         }
 
@@ -248,7 +252,8 @@ class TicketEddRequest extends TicketRequest
     }
 
     /**
-     * @param string[] $documentAltIds
+     * @param array<string> $documentAltIds
+     *
      * @return void
      */
     public function setDocumentAltIds(array $documentAltIds): void

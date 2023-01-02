@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\ResponseModel;
 
-class Library
+final class Library
 {
     /**
      * Sigla code

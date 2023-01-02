@@ -6,5 +6,8 @@ namespace Mzk\ZiskejApi\RequestModel;
 
 abstract class TicketRequest
 {
-
+    /**
+     * @return array<string>
+     */
+    abstract public function toArray(): array;
 }

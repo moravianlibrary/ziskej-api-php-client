@@ -4,30 +4,25 @@ declare(strict_types=1);
 
 namespace Mzk\ZiskejApi;
 
+use GuzzleHttp\Psr7\Utils;
 use Http\Client\Common\Plugin\AuthenticationPlugin;
 use Http\Client\Common\Plugin\BaseUriPlugin;
 use Http\Client\Common\Plugin\LoggerPlugin;
 use Http\Client\Common\PluginClient;
 use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
-use Http\Discovery\MessageFactoryDiscovery;
-use Http\Discovery\StreamFactoryDiscovery;
-use Http\Discovery\UriFactoryDiscovery;
+use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Message\Authentication;
-use Http\Message\MultipartStream\MultipartStreamBuilder;
 use Psr\Log\LoggerInterface;
-
-use function GuzzleHttp\Psr7\stream_for;
 
 final class ApiClient
 {
-
     /**
      * Base URI of the client
      *
      * @var string|\Psr\Http\Message\UriInterface|null
      */
-    private $baseUri = null;
+    private $baseUri;
 
     /**
      * @var \Http\Client\HttpClient
@@ -37,15 +32,15 @@ final class ApiClient
     /**
      * @var \Http\Message\Authentication|null
      */
-    private ?Authentication $authentication = null;
+    private ?Authentication $authentication;
 
     /**
      * @var \Psr\Log\LoggerInterface|null
      */
-    private ?LoggerInterface $logger = null;
+    private ?LoggerInterface $logger;
 
     /**
-     * @var mixed[]
+     * @var array<mixed>
      */
     private array $plugins = [];
 
@@ -61,7 +56,7 @@ final class ApiClient
 
         // set base uri
         if ($this->baseUri) {
-            $this->plugins[] = new BaseUriPlugin(UriFactoryDiscovery::find()->createUri($this->baseUri), [
+            $this->plugins[] = new BaseUriPlugin(Psr17FactoryDiscovery::findUriFactory()->createUri($this->baseUri), [
                 'replace' => true,
             ]);
         }
@@ -76,7 +71,7 @@ final class ApiClient
         }
 
         $this->httpClient = new PluginClient(
-            !empty($httpClient) ? $httpClient : HttpClientDiscovery::find(),
+            $httpClient ?? HttpClientDiscovery::find(),
             $this->plugins
         );
     }
@@ -85,48 +80,23 @@ final class ApiClient
      * Send ApiRequest and get ApiResponse
      *
      * @param \Mzk\ZiskejApi\ApiRequest $requestObject
+     *
      * @return \Mzk\ZiskejApi\ApiResponse
      *
-     * @throws \Http\Client\Exception
+     * @throws \Psr\Http\Client\ClientExceptionInterface
      */
     public function sendApiRequest(ApiRequest $requestObject): ApiResponse
     {
-        $messageFactory = MessageFactoryDiscovery::find();
+        $requestFactory = Psr17FactoryDiscovery::findRequestFactory();
 
-        if ($requestObject->getEndpoint() === '/login') {
-            // POST request with form values
-            $streamFactory = StreamFactoryDiscovery::find();
-            $builder = new MultipartStreamBuilder($streamFactory);
-            /**
-             * @var string $key
-             * @var mixed $val
-             */
-            foreach ($requestObject->getParamsData() as $key => $val) {
-                if (is_array($val)) {
-                    //@todo!!! how to send array as post parameter?
-                    continue;
-                    //$val = json_encode($val);
-                }
-                $builder->addResource((string)$key, $val);
-            }
-            $boundary = $builder->getBoundary();
-            $headers = [
-                'Content-Type' => 'multipart/form-data; boundary="' . $boundary . '"',
-            ];
-            $body = $builder->build();
-        } else {
-            $headers = [
-                'Content-Type' => 'application/json',
-            ];
-            $body = stream_for(json_encode($requestObject->getParamsData()));
-        }
+        $body = Utils::streamFor(json_encode($requestObject->getParamsData()));
 
-        $request = $messageFactory->createRequest(
+        $request = $requestFactory->createRequest(
             $requestObject->getMethod(),
-            $requestObject->getUri(),
-            $headers,
-            $body
-        );
+            $requestObject->getUri()
+        )
+            ->withHeader('Content-Type', 'application/json')
+            ->withBody($body);
 
         $response = $this->httpClient->sendRequest($request);
 

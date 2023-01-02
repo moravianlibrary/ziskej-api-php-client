@@ -8,22 +8,21 @@ use Mzk\ZiskejApi\TestCase;
 
 final class MessagesCollectionTest extends TestCase
 {
-
     /**
-     * @var mixed[][]
+     * @var array<array<mixed>>
      */
-    private $input = [
+    private array $input = [
         [
-            "sender" => "reader",
-            "created_datetime" => "2020-02-04T12:32:44+01:00",
-            "unread" => false,
-            "text" => "čistý text bez formátování s novými řádky typu unix",
+            'sender' => 'reader',
+            'created_datetime' => '2020-02-04T12:32:44+01:00',
+            'unread' => false,
+            'text' => 'čistý text bez formátování s novými řádky typu unix',
         ],
         [
-            "sender" => "library_zk",
-            "created_datetime" => "2020-02-04T12:32:44+01:00",
-            "unread" => true,
-            "text" => "Lorem ipsum",
+            'sender' => 'library_zk',
+            'created_datetime' => '2020-02-04T12:32:44+01:00',
+            'unread' => true,
+            'text' => 'Lorem ipsum',
         ],
     ];
 
@@ -34,6 +33,9 @@ final class MessagesCollectionTest extends TestCase
         $this->assertEquals([], $message);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testCreateFromArray(): void
     {
         $messageCollection = MessageCollection::fromArray($this->input);

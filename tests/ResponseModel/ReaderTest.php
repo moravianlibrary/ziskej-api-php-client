@@ -8,7 +8,6 @@ use Mzk\ZiskejApi\TestCase;
 
 final class ReaderTest extends TestCase
 {
-
     public function testCreate(): void
     {
         $reader = new Reader('ID12345', true, true, true);

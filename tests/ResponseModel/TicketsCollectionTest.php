@@ -8,11 +8,10 @@ use Mzk\ZiskejApi\TestCase;
 
 final class TicketsCollectionTest extends TestCase
 {
-
     /**
-     * @var mixed[][]
+     * @var array<array<mixed>>
      */
-    private $input = [
+    private array $input = [
         [
             'ticket_id' => 'abc0000000000001',
             'ticket_type' => 'mvs',
@@ -22,8 +21,8 @@ final class TicketsCollectionTest extends TestCase
             'status_reader' => 'created',
             'status_reader_history' => [
                 [
-                    "date" => "2020-03-09",
-                    "id" => "created",
+                    'date' => '2020-03-09',
+                    'id' => 'created',
                 ],
             ],
             'is_open' => true,
@@ -46,12 +45,12 @@ final class TicketsCollectionTest extends TestCase
             'status_reader' => 'accepted',
             'status_reader_history' => [
                 [
-                    "date" => "2020-03-09",
-                    "id" => "created",
+                    'date' => '2020-03-09',
+                    'id' => 'created',
                 ],
                 [
-                    "date" => "2020-03-10",
-                    "id" => "accepted",
+                    'date' => '2020-03-10',
+                    'id' => 'accepted',
                 ],
             ],
             'is_open' => true,
@@ -76,6 +75,9 @@ final class TicketsCollectionTest extends TestCase
         $this->assertEquals([], $tickets);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testCreateFromArray(): void
     {
         $ticketsCollection = TicketsCollection::fromArray($this->input);

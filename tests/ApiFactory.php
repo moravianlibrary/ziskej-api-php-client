@@ -4,23 +4,21 @@ declare(strict_types=1);
 
 namespace Mzk\ZiskejApi;
 
+use DateTimeImmutable;
 use Http\Message\Authentication\Bearer;
-use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Configuration;
-use Lcobucci\JWT\Signer\Ecdsa\MultibyteStringConverter;
 use Lcobucci\JWT\Signer\Ecdsa\Sha512;
 use Lcobucci\JWT\Signer\Key;
 use Monolog\Logger;
 
-class ApiFactory
+final class ApiFactory
 {
-
     public static function createApi(): Api
     {
         $keyFile = __DIR__ . '/../.private/cert-cpk-ziskej-api.key';
 
-        $signer = new Sha512(new MultibyteStringConverter());
-        $privateKey = Key\LocalFileReference::file($keyFile);
+        $signer = Sha512::create();
+        $privateKey = Key\InMemory::file($keyFile);
 
         $config = Configuration::forSymmetricSigner(
             $signer,
@@ -29,8 +27,8 @@ class ApiFactory
 
         $token = $config->builder()
             ->issuedBy('cpk') // Configures the issuer (iss claim)
-            ->issuedAt((new \DateTimeImmutable())->setTimestamp(time())) // Token issued time
-            ->expiresAt((new \DateTimeImmutable())->setTimestamp(time() + 3600)) // Token expiration time
+            ->issuedAt((new DateTimeImmutable())->setTimestamp(time())) // Token issued time
+            ->expiresAt((new DateTimeImmutable())->setTimestamp(time() + 3600)) // Token expiration time
             ->withClaim('app', 'cpk')
             ->getToken($signer, $privateKey); // Retrieves the generated token
 
@@ -39,7 +37,7 @@ class ApiFactory
         return new Api(
             new ApiClient(
                 null,
-                getenv('APP_API_URL'),
+                (string) getenv('APP_API_URL'),
                 new Bearer($token->toString()),
                 new Logger('ZiskejApi')
             )

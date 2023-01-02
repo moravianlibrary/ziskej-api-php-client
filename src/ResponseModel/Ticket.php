@@ -10,12 +10,14 @@ use Mzk\ZiskejApi\Enum\TicketEddDocDataSource;
 use Mzk\ZiskejApi\Enum\TicketEddSubtype;
 use Mzk\ZiskejApi\Enum\TicketType;
 use SmartEmailing\Types\Arrays;
+use SmartEmailing\Types\BoolType;
 use SmartEmailing\Types\DatesImmutable;
-use SmartEmailing\Types\PrimitiveTypes;
+use SmartEmailing\Types\IntType;
+use SmartEmailing\Types\StringType;
+use SmartEmailing\Types\UrlType;
 
-class Ticket
+final class Ticket
 {
-
     /**
      * Ticket id
      *
@@ -27,6 +29,7 @@ class Ticket
      * Ticket type (mvs, edd)
      *
      * @var string
+     *
      * @see \Mzk\ZiskejApi\Enum\TicketType
      */
     private string $type;
@@ -35,6 +38,7 @@ class Ticket
      * Edd ticket create type (auto, manual)
      *
      * @var ?string
+     *
      * @see \Mzk\ZiskejApi\Enum\TicketEddDocDataSource
      */
     private ?string $ticketDocDataSource = null;
@@ -43,6 +47,7 @@ class Ticket
      * Edd ticket subtype (article, selection)
      *
      * @var string|null
+     *
      * @see \Mzk\ZiskejApi\Enum\TicketEddSubtype
      */
     private ?string $eddSubtype = null;
@@ -72,6 +77,7 @@ class Ticket
      * Status
      *
      * @var string|null
+     *
      * @see \Mzk\ZiskejApi\Enum\StatusName
      */
     private ?string $status = null;
@@ -79,7 +85,7 @@ class Ticket
     /**
      * History of ticket statuses
      *
-     * @var \Mzk\ZiskejApi\ResponseModel\Status[]
+     * @var array<\Mzk\ZiskejApi\ResponseModel\Status>
      */
     private array $statusHistory = [];
 
@@ -217,11 +223,14 @@ class Ticket
     /**
      * Link to payment URL
      *
-     * @var string|null  //@todo url type
+     * @var \SmartEmailing\Types\UrlType|null
      */
-    private ?string $paymentUrl = null;
+    private ?UrlType $paymentUrl = null;
 
-    private ?string $downloadUrl = null;
+    /**
+     * @var \SmartEmailing\Types\UrlType|null
+     */
+    private ?UrlType $downloadUrl = null;
 
     /**
      * @throws \Consistence\Enum\InvalidEnumValueException
@@ -238,7 +247,8 @@ class Ticket
     }
 
     /**
-     * @param string[] $data
+     * @param array<string> $data
+     *
      * @return \Mzk\ZiskejApi\ResponseModel\Ticket
      *
      * @throws \Exception
@@ -246,54 +256,54 @@ class Ticket
     public static function fromArray(array $data): Ticket
     {
         $ticket = new self(
-            PrimitiveTypes::extractString($data, 'ticket_type'),
-            PrimitiveTypes::extractString($data, 'ticket_id'),
-            new DateTimeImmutable(PrimitiveTypes::extractString($data, 'created_datetime'))
+            StringType::extract($data, 'ticket_type'),
+            StringType::extract($data, 'ticket_id'),
+            new DateTimeImmutable(StringType::extract($data, 'created_datetime'))
         );
-        $ticket->ticketDocDataSource = PrimitiveTypes::extractStringOrNull($data, 'ticket_doc_data_source', true);
+        $ticket->ticketDocDataSource = StringType::extractOrNull($data, 'ticket_doc_data_source', true);
         if (!is_null($ticket->ticketDocDataSource)) {
             TicketEddDocDataSource::checkValue($ticket->ticketDocDataSource);
         }
-        $ticket->eddSubtype = PrimitiveTypes::extractStringOrNull($data, 'edd_subtype', true);
+        $ticket->eddSubtype = StringType::extractOrNull($data, 'edd_subtype', true);
         if (!is_null($ticket->eddSubtype)) {
             TicketEddSubtype::checkValue($ticket->eddSubtype);
         }
-        $ticket->hid = PrimitiveTypes::extractStringOrNull($data, 'hid', true);
-        $ticket->sigla = PrimitiveTypes::extractStringOrNull($data, 'sigla', true);
-        $ticket->isOpen = PrimitiveTypes::extractBoolOrNull($data, 'is_open', true);
-        $ticket->status = PrimitiveTypes::extractStringOrNull($data, 'status_reader', true);
+        $ticket->hid = StringType::extractOrNull($data, 'hid', true);
+        $ticket->sigla = StringType::extractOrNull($data, 'sigla', true);
+        $ticket->isOpen = BoolType::extractOrNull($data, 'is_open', true);
+        $ticket->status = StringType::extractOrNull($data, 'status_reader', true);
         if (!is_null($ticket->status)) {
             StatusName::checkValue($ticket->status);
         }
-        foreach (Arrays::extractArray($data, 'status_reader_history') as $statusHistory) {
+        foreach (Arrays::extract($data, 'status_reader_history') as $statusHistory) {
             $ticket->statusHistory[] = Status::fromArray($statusHistory);
         }
-        $ticket->statusLabel = PrimitiveTypes::extractStringOrNull($data, 'status_label', true);
-        $ticket->updatedAt = PrimitiveTypes::extractStringOrNull($data, 'updated_datetime', true)
-            ? new DateTimeImmutable(PrimitiveTypes::extractStringOrNull($data, 'updated_datetime', true))
+        $ticket->statusLabel = StringType::extractOrNull($data, 'status_label', true);
+        $ticket->updatedAt = StringType::extractOrNull($data, 'updated_datetime', true)
+            ? new DateTimeImmutable(StringType::extractOrNull($data, 'updated_datetime', true))
             : null;
         $ticket->requestedAt = DatesImmutable::extractOrNull($data, 'date_requested', true);
         $ticket->returnAt = DatesImmutable::extractOrNull($data, 'date_return', true);
-        $ticket->countMessages = PrimitiveTypes::extractIntOrNull($data, 'count_messages', true) ?? 0;
-        $ticket->countMessagesUnread = PrimitiveTypes::extractIntOrNull($data, 'count_messages_unread', true) ?? 0;
-        $ticket->documentId = PrimitiveTypes::extractStringOrNull($data, 'doc_id', true);
-        $ticket->docTitleIn = PrimitiveTypes::extractStringOrNull($data, 'doc_title_in', true);
-        $ticket->docTitle = PrimitiveTypes::extractStringOrNull($data, 'doc_title', true);
-        $ticket->docVolume = PrimitiveTypes::extractStringOrNull($data, 'doc_volume', true);
-        $ticket->docNumberYear = PrimitiveTypes::extractStringOrNull($data, 'doc_number_year', true);
-        $ticket->docNumberPyear = PrimitiveTypes::extractStringOrNull($data, 'doc_number_pyear', true);
-        $ticket->docNumberPnumber = PrimitiveTypes::extractStringOrNull($data, 'doc_number_pnumber', true);
-        $ticket->docAuthor = PrimitiveTypes::extractStringOrNull($data, 'doc_author', true);
-        $ticket->docIssuer = PrimitiveTypes::extractStringOrNull($data, 'doc_issuer', true);
-        $ticket->docIsbn = PrimitiveTypes::extractStringOrNull($data, 'doc_isbn', true);
-        $ticket->docIssn = PrimitiveTypes::extractStringOrNull($data, 'doc_issn', true);
-        $ticket->docCitation = PrimitiveTypes::extractStringOrNull($data, 'doc_citation', true);
-        $ticket->docNote = PrimitiveTypes::extractStringOrNull($data, 'doc_note', true);
-        $ticket->paymentId = PrimitiveTypes::extractStringOrNull($data, 'payment_id', true);
-        $ticket->paymentUrl = PrimitiveTypes::extractStringOrNull($data, 'payment_url', true);
-        $ticket->downloadUrl = PrimitiveTypes::extractStringOrNull($data, 'edd_reader_url', true);
-        $ticket->pagesFrom = PrimitiveTypes::extractIntOrNull($data, 'pages_from', true);
-        $ticket->pagesTo = PrimitiveTypes::extractIntOrNull($data, 'pages_to', true);
+        $ticket->countMessages = IntType::extractOrNull($data, 'count_messages', true) ?? 0;
+        $ticket->countMessagesUnread = IntType::extractOrNull($data, 'count_messages_unread', true) ?? 0;
+        $ticket->documentId = StringType::extractOrNull($data, 'doc_id', true);
+        $ticket->docTitleIn = StringType::extractOrNull($data, 'doc_title_in', true);
+        $ticket->docTitle = StringType::extractOrNull($data, 'doc_title', true);
+        $ticket->docVolume = StringType::extractOrNull($data, 'doc_volume', true);
+        $ticket->docNumberYear = StringType::extractOrNull($data, 'doc_number_year', true);
+        $ticket->docNumberPyear = StringType::extractOrNull($data, 'doc_number_pyear', true);
+        $ticket->docNumberPnumber = StringType::extractOrNull($data, 'doc_number_pnumber', true);
+        $ticket->docAuthor = StringType::extractOrNull($data, 'doc_author', true);
+        $ticket->docIssuer = StringType::extractOrNull($data, 'doc_issuer', true);
+        $ticket->docIsbn = StringType::extractOrNull($data, 'doc_isbn', true);
+        $ticket->docIssn = StringType::extractOrNull($data, 'doc_issn', true);
+        $ticket->docCitation = StringType::extractOrNull($data, 'doc_citation', true);
+        $ticket->docNote = StringType::extractOrNull($data, 'doc_note', true);
+        $ticket->paymentId = StringType::extractOrNull($data, 'payment_id', true);
+        $ticket->paymentUrl = UrlType::extractOrNull($data, 'payment_url', true);
+        $ticket->downloadUrl = UrlType::extractOrNull($data, 'edd_reader_url', true);
+        $ticket->pagesFrom = IntType::extractOrNull($data, 'pages_from', true);
+        $ticket->pagesTo = IntType::extractOrNull($data, 'pages_to', true);
         return $ticket;
     }
 
@@ -338,7 +348,7 @@ class Ticket
     }
 
     /**
-     * @return \Mzk\ZiskejApi\ResponseModel\Status[]
+     * @return array<\Mzk\ZiskejApi\ResponseModel\Status>
      */
     public function getStatusHistory(): array
     {
@@ -462,7 +472,7 @@ class Ticket
 
     public function getPaymentUrl(): ?string
     {
-        return $this->paymentUrl;
+        return $this->paymentUrl->getValue();
     }
 
     /**
@@ -470,6 +480,6 @@ class Ticket
      */
     public function getDownloadUrl(): ?string
     {
-        return $this->downloadUrl;
+        return $this->downloadUrl->getValue();
     }
 }

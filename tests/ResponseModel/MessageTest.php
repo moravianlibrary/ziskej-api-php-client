@@ -6,20 +6,23 @@ namespace Mzk\ZiskejApi\ResponseModel;
 
 use DateTimeImmutable;
 use Mzk\ZiskejApi\TestCase;
+use SmartEmailing\Types\InvalidTypeException;
 
 final class MessageTest extends TestCase
 {
-
     /**
-     * @var mixed[]
+     * @var array<mixed>
      */
-    private $input = [
-        "sender" => "reader",
-        "created_datetime" => "2020-02-04T12:32:44+01:00",
-        "unread" => false,
-        "text" => "čistý text bez formátování s novými řádky typu unix",
+    private array $input = [
+        'sender' => 'reader',
+        'created_datetime' => '2020-02-04T12:32:44+01:00',
+        'unread' => false,
+        'text' => 'čistý text bez formátování s novými řádky typu unix',
     ];
 
+    /**
+     * @throws \Exception
+     */
     public function testCreateFromArray(): void
     {
         $message = Message::fromArray($this->input);
@@ -33,9 +36,12 @@ final class MessageTest extends TestCase
         $this->assertEquals($this->input['text'], $message->getText());
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testCreateEmpty(): void
     {
-        $this->expectException(\SmartEmailing\Types\InvalidTypeException::class);
+        $this->expectException(InvalidTypeException::class);
         Message::fromArray([]);
     }
 }
