@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\Exception;
 
+use Exception;
 use Mzk\ZiskejApi\ApiResponse;
 
-class ApiResponseException extends \Exception
+final class ApiResponseException extends Exception
 {
-
     public function __construct(ApiResponse $apiResponse)
     {
         parent::__construct(
@@ -16,11 +16,10 @@ class ApiResponseException extends \Exception
                 'Ziskej API response error: "%d %s: %s"',
                 $apiResponse->getStatusCode(),
                 $apiResponse->getReasonPhrase(),
-                (string)$apiResponse->getBody()
+                (string) $apiResponse->getBody()
             ),
             $apiResponse->getStatusCode(),
             parent::getPrevious()
         );
-        //@todo log this exception
     }
 }

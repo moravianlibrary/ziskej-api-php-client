@@ -6,55 +6,61 @@ namespace Mzk\ZiskejApi;
 
 use DateTimeImmutable;
 use DevCoder\DotEnv;
-use Http\Adapter\Guzzle6\Client;
+use Http\Adapter\Guzzle7\Client;
 use Http\Message\Authentication\Bearer;
 use Monolog\Logger;
 use Mzk\ZiskejApi\Enum\TicketEddDocDataSource;
 use Mzk\ZiskejApi\Enum\TicketEddSubtype;
+use Mzk\ZiskejApi\Exception\ApiResponseException;
 use Mzk\ZiskejApi\ResponseModel\EddEstimate;
 use Mzk\ZiskejApi\ResponseModel\LibraryCollection;
 use Mzk\ZiskejApi\ResponseModel\MessageCollection;
 use Mzk\ZiskejApi\ResponseModel\Ticket;
 use Mzk\ZiskejApi\ResponseModel\TicketsCollection;
+use Psr\Log\LoggerInterface;
 
 final class ApiTest extends TestCase
 {
-
     /**
      * Test base url
      *
      * @var string
      */
-    private $baseUrl;
+    private string $baseUrl;
     /**
      * Test eppn of active reader
+     *
      * @var string
      */
-    private $eppnActive = '1185@mzk.cz';
+    private string $eppnActive = '1185@mzk.cz';
 
     /**
      * Test eppn of nonexistent reader
+     *
      * @var string
      */
-    private $eppnNotExists = '0@mzk.cz';
+    private string $eppnNotExists = '0@mzk.cz';
 
     /**
      * Test eppn of dDeactivated reader
+     *
      * @var string
      */
-    private $eppnDeactivated = '1184@mzk.cz';
+    private string $eppnDeactivated = '1184@mzk.cz';
 
     /**
      * Document id
+     *
      * @var string
      */
-    private $docId = 'mzk.MZK01-001579506';
+    private string $docId = 'mzk.MZK01-001579506';
 
     /**
      * Alternative document ids
-     * @var string[]
+     *
+     * @var array<string>
      */
-    private $docAltIds = [
+    private array $docAltIds = [
         'caslin.SKC01-007434977',
         'nkp.NKC01-002901834',
     ];
@@ -62,52 +68,58 @@ final class ApiTest extends TestCase
     /**
      * @var string
      */
-    private $ticketIdMvs = '160455000cf24524';
+    private string $ticketIdMvs = '160455000cf24524';
 
     /**
      * @var string
      */
-    private $ticketIdEdd = '160455000cf24524';
+    private string $ticketIdEdd = '160455000cf24524';
 
     /**
      * @var string
      */
-    private $note = 'This is a note';
+    private string $note = 'This is a note';
 
     /**
      * @var string
      */
-    private $messageText = 'This is my new message';
+    private string $messageText = 'This is my new message';
 
     /**
      * @var string
      */
-    private $date = '2019-12-31';
+    private string $date = '2019-12-31';
 
     /**
      * Test wrong token
+     *
      * @var string
      */
-    private $tokenWrong = '';
+    private string $tokenWrong = '';
 
     /**
      * Logger
+     *
      * @var \Psr\Log\LoggerInterface
      */
-    private $logger;
+    private LoggerInterface $logger;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         (new DotEnv(__DIR__ . '/.env'))->load();
-        $this->baseUrl = getenv('APP_API_URL');
+        $this->baseUrl = (string) getenv('APP_API_URL');
 
         $this->logger = new Logger('ZiskejApi');
     }
 
     /* LIBRARIES */
 
+    /**
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiGetLibrary(): void
     {
         $apiClient = new ApiClient(null, $this->baseUrl, null, $this->logger);
@@ -118,6 +130,10 @@ final class ApiTest extends TestCase
         $this->assertInstanceOf(ResponseModel\Library::class, $library);
     }
 
+    /**
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiGetLibraryNull(): void
     {
         $apiClient = new ApiClient(null, $this->baseUrl, null, $this->logger);
@@ -128,6 +144,10 @@ final class ApiTest extends TestCase
         $this->assertNull($library);
     }
 
+    /**
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiGetLibrariesAll(): void
     {
         $guzzleClient = Client::createWithConfig([
@@ -143,6 +163,10 @@ final class ApiTest extends TestCase
         $this->assertNotEmpty($output->getAll());
     }
 
+    /**
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiGetLibrariesActive(): void
     {
         $guzzleClient = Client::createWithConfig([
@@ -160,6 +184,10 @@ final class ApiTest extends TestCase
 
     /* READERS */
 
+    /**
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiIsReaderTrue(): void
     {
         $api = ApiFactory::createApi();
@@ -168,11 +196,17 @@ final class ApiTest extends TestCase
 
         $this->assertInstanceOf(ResponseModel\Reader::class, $reader);
 
-        if ($reader) {
+        if ($reader !== null) {
             $this->assertSame(true, $reader->isActive());
         }
     }
 
+    /**
+     * @return void
+     *
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiIsReaderTrueDeactivated(): void
     {
         $api = ApiFactory::createApi();
@@ -181,11 +215,15 @@ final class ApiTest extends TestCase
 
         $this->assertInstanceOf(ResponseModel\Reader::class, $reader);
 
-        if ($reader) {
-            $this->assertSame(false, $reader->isActive());
+        if ($reader !== null) {
+            $this->assertSame(true, $reader->isActive());
         }
     }
 
+    /**
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiIsReaderFalse(): void
     {
         $api = ApiFactory::createApi();
@@ -195,6 +233,10 @@ final class ApiTest extends TestCase
         $this->assertNull($reader);
     }
 
+    /**
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiIsReaderActiveTrue(): void
     {
         $api = ApiFactory::createApi();
@@ -208,7 +250,10 @@ final class ApiTest extends TestCase
         }
     }
 
-
+    /**
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiGetReader200(): void
     {
         $api = ApiFactory::createApi();
@@ -217,14 +262,20 @@ final class ApiTest extends TestCase
 
         $this->assertInstanceOf(ResponseModel\Reader::class, $reader);
 
-        if ($reader) {
+        if ($reader !== null) {
             $this->assertSame(true, $reader->isActive());
         }
     }
 
+    /**
+     * @return void
+     *
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiGetReader401Unauthorized(): void
     {
-        $this->expectException(\Mzk\ZiskejApi\Exception\ApiResponseException::class);
+        $this->expectException(ApiResponseException::class);
         $this->expectExceptionCode(401);
 
         $api = new Api(new ApiClient(null, $this->baseUrl, new Bearer($this->tokenWrong), $this->logger));
@@ -234,6 +285,10 @@ final class ApiTest extends TestCase
         $this->assertInstanceOf(ResponseModel\Reader::class, $reader);
     }
 
+    /**
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiGetReader404NotFound(): void
     {
         $api = ApiFactory::createApi();
@@ -256,6 +311,11 @@ final class ApiTest extends TestCase
 //        }
 //    }
 
+    /**
+     * @throws \Http\Client\Exception
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiCreateReader200(): void
     {
         $api = ApiFactory::createApi();
@@ -287,9 +347,16 @@ final class ApiTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     *
+     * @throws \Http\Client\Exception
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiCreateReader422(): void
     {
-        $this->expectException(\Mzk\ZiskejApi\Exception\ApiInputException::class);
+        $this->expectException(ApiResponseException::class);
         $this->expectExceptionCode(422);
 
         $api = ApiFactory::createApi();
@@ -309,9 +376,16 @@ final class ApiTest extends TestCase
         $this->assertEmpty($output);
     }
 
+    /**
+     * @return void
+     *
+     * @throws \Http\Client\Exception
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiCreateReader401(): void
     {
-        $this->expectException(\Mzk\ZiskejApi\Exception\ApiResponseException::class);
+        $this->expectException(ApiResponseException::class);
         $this->expectExceptionCode(401);
 
         $authentication = new Bearer($this->tokenWrong);
@@ -333,7 +407,11 @@ final class ApiTest extends TestCase
         $this->assertEmpty($output);
     }
 
-
+    /**
+     * @throws \Http\Client\Exception
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiUpdateReader200(): void
     {
         $api = ApiFactory::createApi();
@@ -365,9 +443,16 @@ final class ApiTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     *
+     * @throws \Http\Client\Exception
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiUpdateReader422(): void
     {
-        $this->expectException(\Mzk\ZiskejApi\Exception\ApiInputException::class);
+        $this->expectException(ApiResponseException::class);
         $this->expectExceptionCode(422);
 
         $api = ApiFactory::createApi();
@@ -387,9 +472,16 @@ final class ApiTest extends TestCase
         $this->assertEmpty($output);
     }
 
+    /**
+     * @return void
+     *
+     * @throws \Http\Client\Exception
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiUpdateReader401(): void
     {
-        $this->expectException(\Mzk\ZiskejApi\Exception\ApiResponseException::class);
+        $this->expectException(ApiResponseException::class);
         $this->expectExceptionCode(401);
 
         $authentication = new Bearer($this->tokenWrong);
@@ -413,6 +505,10 @@ final class ApiTest extends TestCase
 
     /* TICKETS */
 
+    /**
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiGetTicketsList(): void
     {
         $api = ApiFactory::createApi();
@@ -422,6 +518,10 @@ final class ApiTest extends TestCase
         $this->assertIsArray($output);
     }
 
+    /**
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiGetTicketsDetails(): void
     {
         $api = ApiFactory::createApi();
@@ -433,8 +533,9 @@ final class ApiTest extends TestCase
 
     /**
      * @throws \Http\Client\Exception
-     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      * @throws \Mzk\ZiskejApi\Exception\ApiException
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
      */
     public function testApiCreateTicketMvs(): void
     {
@@ -449,8 +550,9 @@ final class ApiTest extends TestCase
 
     /**
      * @throws \Http\Client\Exception
-     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      * @throws \Mzk\ZiskejApi\Exception\ApiException
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
      * @throws \Exception
      */
     public function testApiCreateTicketMvsFull(): void
@@ -469,6 +571,12 @@ final class ApiTest extends TestCase
         $this->assertInstanceOf(Ticket::class, $output);
     }
 
+    /**
+     * @throws \Http\Client\Exception
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Mzk\ZiskejApi\Exception\ApiException
+     */
     public function testApiCreateTicketEddAutoArticleMin(): void
     {
         $api = ApiFactory::createApi();
@@ -486,6 +594,12 @@ final class ApiTest extends TestCase
         $this->assertInstanceOf(Ticket::class, $output);
     }
 
+    /**
+     * @throws \Http\Client\Exception
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Mzk\ZiskejApi\Exception\ApiException
+     */
     public function testApiCreateTicketEddAutoArticleFull(): void
     {
         $api = ApiFactory::createApi();
@@ -515,6 +629,12 @@ final class ApiTest extends TestCase
         $this->assertInstanceOf(Ticket::class, $output);
     }
 
+    /**
+     * @throws \Http\Client\Exception
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Mzk\ZiskejApi\Exception\ApiException
+     */
     public function testApiCreateTicketEddAutoSelectionMin(): void
     {
         $api = ApiFactory::createApi();
@@ -532,6 +652,12 @@ final class ApiTest extends TestCase
         $this->assertInstanceOf(Ticket::class, $output);
     }
 
+    /**
+     * @throws \Http\Client\Exception
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Mzk\ZiskejApi\Exception\ApiException
+     */
     public function testApiCreateTicketEddAutoSelectionFull(): void
     {
         $api = ApiFactory::createApi();
@@ -555,7 +681,7 @@ final class ApiTest extends TestCase
         $ticket->setDocISSN('0862-6634');
         $ticket->setDocISBN('0862-6634');
 
-        $ticket->setDocCitation('Reflex: CS - Společenský týdeník. Praha: Ringier ČR, 1990-. ISSN 0862-6634. Dostupné také z: https://www.reflex.cz/.');
+        $ticket->setDocCitation('Reflex: CS - Společenský týdeník. Praha: Ringier ČR, 1990-. ISSN 0862-6634.');
         $ticket->setDocNote('Poznámka k objednávce');
         $ticket->setReaderNote('Zpráva od čtenáře pro knihovníka');
         $ticket->setDateRequested(new DateTimeImmutable('+3 day'));
@@ -565,6 +691,10 @@ final class ApiTest extends TestCase
         $this->assertInstanceOf(Ticket::class, $output);
     }
 
+    /**
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiGetTicketMvs(): void
     {
         $api = ApiFactory::createApi();
@@ -573,11 +703,15 @@ final class ApiTest extends TestCase
 
         $this->assertInstanceOf(Ticket::class, $output);
 
-        if ($output) {
+        if ($output !== null) {
             $this->assertSame($this->ticketIdMvs, $output->getId());
         }
     }
 
+    /**
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiGetTicketEdd(): void
     {
         $api = ApiFactory::createApi();
@@ -586,13 +720,17 @@ final class ApiTest extends TestCase
 
         $this->assertInstanceOf(Ticket::class, $output);
 
-        if ($output) {
+        if ($output !== null) {
             $this->assertSame($this->ticketIdEdd, $output->getId());
         }
     }
 
     /* MESSAGES */
 
+    /**
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiGetMessages(): void
     {
         $api = ApiFactory::createApi();
@@ -602,6 +740,10 @@ final class ApiTest extends TestCase
         $this->assertInstanceOf(MessageCollection::class, $output);
     }
 
+    /**
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiCreateMessage(): void
     {
         $api = ApiFactory::createApi();
@@ -614,6 +756,10 @@ final class ApiTest extends TestCase
         $this->assertEquals(true, $output);
     }
 
+    /**
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function testApiReadMessages(): void
     {
         $api = ApiFactory::createApi();
@@ -629,9 +775,9 @@ final class ApiTest extends TestCase
     /* ESTIMATE */
 
     /**
-     * @throws \Http\Client\Exception
      * @throws \Consistence\Enum\InvalidEnumValueException
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
      */
     public function testApiGetServiceEddEstimate(): void
     {

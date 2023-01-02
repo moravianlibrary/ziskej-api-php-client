@@ -7,9 +7,8 @@ namespace Mzk\ZiskejApi\RequestModel;
 use DateTimeImmutable;
 use Mzk\ZiskejApi\Enum\TicketType;
 
-class TicketMvsRequest extends TicketRequest
+final class TicketMvsRequest extends TicketRequest
 {
-
     /**
      * Ticket type
      *
@@ -34,7 +33,7 @@ class TicketMvsRequest extends TicketRequest
     /**
      * Alternative document IDs
      *
-     * @var string[]
+     * @var array<string>
      */
     protected array $documentAltIds = [];
 
@@ -50,7 +49,7 @@ class TicketMvsRequest extends TicketRequest
      *
      * @param string $documentId
      * @param \DateTimeImmutable|null $dateRequested
-     * @param string[] $documentAltIds
+     * @param array<string> $documentAltIds
      * @param string|null $readerNote
      */
     public function __construct(
@@ -66,7 +65,7 @@ class TicketMvsRequest extends TicketRequest
     }
 
     /**
-     * @return string[]
+     * @return array<string, array<string>|string>
      */
     public function toArray(): array
     {
@@ -75,15 +74,15 @@ class TicketMvsRequest extends TicketRequest
             'doc_id' => $this->documentId,
         ];
 
-        if (!empty($this->documentAltIds)) {
+        if (count($this->documentAltIds)) {
             $return['doc_alt_ids'] = $this->documentAltIds;
         }
 
-        if (!empty($this->readerNote)) {
+        if ($this->readerNote !== null) {
             $return['reader_note'] = $this->readerNote;
         }
 
-        if (!empty($this->dateRequested)) {
+        if ($this->dateRequested !== null) {
             $return['date_requested'] = $this->dateRequested->format('Y-m-d');
         }
 
@@ -99,14 +98,6 @@ class TicketMvsRequest extends TicketRequest
     }
 
     /**
-     * @param string $documentId
-     */
-    public function setDocumentId(string $documentId): void
-    {
-        $this->documentId = $documentId;
-    }
-
-    /**
      * @return \DateTimeImmutable|null
      */
     public function getDateRequested(): ?DateTimeImmutable
@@ -115,15 +106,7 @@ class TicketMvsRequest extends TicketRequest
     }
 
     /**
-     * @param \DateTimeImmutable|null $dateRequested
-     */
-    public function setDateRequested(?DateTimeImmutable $dateRequested): void
-    {
-        $this->dateRequested = $dateRequested;
-    }
-
-    /**
-     * @return string[]
+     * @return array<string>
      */
     public function getDocumentAltIds(): array
     {
@@ -131,7 +114,7 @@ class TicketMvsRequest extends TicketRequest
     }
 
     /**
-     * @param string[] $documentAltIds
+     * @param array<string> $documentAltIds
      */
     public function setDocumentAltIds(array $documentAltIds): void
     {
@@ -148,6 +131,7 @@ class TicketMvsRequest extends TicketRequest
 
     /**
      * @param string|null $readerNote
+     * @todo remove setter
      */
     public function setNote(?string $readerNote): void
     {

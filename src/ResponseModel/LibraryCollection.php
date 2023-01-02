@@ -4,25 +4,26 @@ declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\ResponseModel;
 
-use SmartEmailing\Types\PrimitiveTypes;
+use SmartEmailing\Types\StringType;
 
-class LibraryCollection
+final class LibraryCollection
 {
     /**
-     * @var \Mzk\ZiskejApi\ResponseModel\Library[]
+     * @var array<\Mzk\ZiskejApi\ResponseModel\Library>
      */
     private array $items = [];
 
     /**
-     * @param string[][] $data
+     * @param array<array<string>> $data
+     *
      * @return \Mzk\ZiskejApi\ResponseModel\LibraryCollection
      */
     public static function fromArray(array $data): LibraryCollection
     {
         $self = new self();
         foreach ($data as $item) {
-            $sigla = PrimitiveTypes::getStringOrNull($item, true);
-            if (!empty($sigla)) {
+            $sigla = StringType::fromOrNull($item, true);
+            if ($sigla !== null) {
                 $self->addLibrary(new Library($sigla));
             }
         }
@@ -35,7 +36,7 @@ class LibraryCollection
     }
 
     /**
-     * @return \Mzk\ZiskejApi\ResponseModel\Library[]
+     * @return array<\Mzk\ZiskejApi\ResponseModel\Library>
      */
     public function getAll(): array
     {
@@ -46,6 +47,7 @@ class LibraryCollection
      * Get library by key
      *
      * @param string $key
+     *
      * @return \Mzk\ZiskejApi\ResponseModel\Library|null
      */
     public function get(string $key): ?Library

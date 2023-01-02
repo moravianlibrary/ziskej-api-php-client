@@ -4,49 +4,49 @@ declare(strict_types=1);
 
 namespace Mzk\ZiskejApi;
 
-class ApiRequest
+final class ApiRequest
 {
-
     /**
      * HTTP Method
      *
      * @var string
      */
-    protected string $method;
+    private string $method;
 
     /**
      * URI endpoint
      *
      * @var string
      */
-    protected string $endpoint;
+    private string $endpoint;
 
     /**
-     * @var string[]
+     * @var array<string>
      */
-    protected array $urlQuery = [];
+    private array $urlQuery;
 
     /**
      * URL params
      *
-     * @var string[]
+     * @var array<string, int|string>
      */
-    protected array $paramsUrl = [];
+    private array $paramsUrl;
 
     /**
      * Data params
      *
-     * @var string[]
+     * @var array<string>
      */
-    protected array $paramsData = [];
+    private array $paramsData;
 
     /**
      * RequestModel constructor.
+     *
      * @param string $method
      * @param string $endpoint
-     * @param string[] $urlQuery
-     * @param mixed[] $paramsUrl
-     * @param string[] $paramsData
+     * @param array<string> $urlQuery
+     * @param array<string, int|string> $paramsUrl
+     * @param array<string> $paramsData
      */
     public function __construct(
         string $method,
@@ -62,7 +62,6 @@ class ApiRequest
         $this->paramsData = $paramsData;
     }
 
-
     public function getMethod(): string
     {
         return $this->method;
@@ -74,26 +73,28 @@ class ApiRequest
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public function getParamsData(): array
     {
         return $this->paramsData;
     }
 
+    /**
+     * @return string
+     */
     public function getUri(): string
     {
         $uri = '';
 
-        if (!empty($this->urlQuery)) {
+        if (count($this->urlQuery)) {
             $uri .= $this->render($this->endpoint, $this->urlQuery);
         } else {
             $uri .= $this->endpoint;
         }
 
-        $paramsUrl = $this->paramsUrl;
-        if (!empty($paramsUrl)) {
-            $uri .= '?' . http_build_query($paramsUrl);
+        if (count($this->paramsUrl)) {
+            $uri .= '?' . http_build_query($this->paramsUrl);
         }
 
         //@todo create url by using Url object
@@ -103,7 +104,8 @@ class ApiRequest
 
     /**
      * @param string $string
-     * @param string[] $replaces
+     * @param array<string> $replaces
+     *
      * @return string
      */
     private function render(string $string, array $replaces): string

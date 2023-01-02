@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\RequestModel;
 
-class Messages
+final class Messages
 {
-
     /**
      * @var bool
      */
-    private bool $read = false;
+    private bool $read;
 
     public function __construct(bool $read)
     {
@@ -18,12 +17,12 @@ class Messages
     }
 
     /**
-     * @return mixed[]
+     * @return array<mixed>
      */
     public function toArray(): array
     {
         return [
-            'unread' => !$this->read,   //@todo change api resource param
+            'unread' => !$this->read,
         ];
     }
 }

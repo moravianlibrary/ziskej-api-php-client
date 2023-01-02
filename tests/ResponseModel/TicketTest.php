@@ -9,11 +9,10 @@ use Mzk\ZiskejApi\TestCase;
 
 final class TicketTest extends TestCase
 {
-
     /**
-     * @var mixed[]
+     * @var array<mixed>
      */
-    private $input = [
+    private array $input = [
         'ticket_id' => 'abc0000000000001',
         'ticket_type' => 'mvs',
         'hid' => 000001,
@@ -22,12 +21,12 @@ final class TicketTest extends TestCase
         'status_reader' => 'created',
         'status_reader_history' => [
             [
-                "date" => "2020-03-09",
-                "id" => "created",
+                'date' => '2020-03-09',
+                'id' => 'created',
             ],
             [
-                "date" => "2020-03-10",
-                "id" => "accepted",
+                'date' => '2020-03-10',
+                'id' => 'accepted',
             ],
         ],
         'is_open' => true,
@@ -42,6 +41,9 @@ final class TicketTest extends TestCase
         'updated_datetime' => '2020-12-31T15:18:20+01:00',
     ];
 
+    /**
+     * @throws \Consistence\Enum\InvalidEnumValueException
+     */
     public function testCreateEmptyObject(): void
     {
         $ticket = new Ticket('mvs', 'ticket_1', new DateTimeImmutable('2019-12-31 13:30:00'));
@@ -63,6 +65,9 @@ final class TicketTest extends TestCase
         $this->assertEquals(0, $ticket->getCountMessagesUnread());
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testCreateFromArray(): void
     {
         $ticket = Ticket::fromArray($this->input);
@@ -80,23 +85,21 @@ final class TicketTest extends TestCase
 
         $this->assertEquals($this->input['created_datetime'], $ticket->getCreatedAt()->format("Y-m-d\TH:i:sP"));
 
-        if (!empty($ticket->getUpdatedAt())) {
+        if ($ticket->getUpdatedAt() !== null) {
             $this->assertEquals($this->input['updated_datetime'], $ticket->getUpdatedAt()->format("Y-m-d\TH:i:sP"));
         }
 
-        if (!empty($ticket->getRequestedAt())) {
+        if ($ticket->getRequestedAt() !== null) {
             $this->assertEquals($this->input['date_requested'], $ticket->getRequestedAt()->format('Y-m-d'));
         }
 
-        if (!empty($ticket->getCreatedAt())) {
-            $this->assertEquals($this->input['date_created'], $ticket->getCreatedAt()->format('Y-m-d'));
-        }
+        $this->assertEquals($this->input['date_created'], $ticket->getCreatedAt()->format('Y-m-d'));
 
-        if (!empty($ticket->getRequestedAt())) {
+        if ($ticket->getRequestedAt() !== null) {
             $this->assertEquals($this->input['date_requested'], $ticket->getRequestedAt()->format('Y-m-d'));
         }
 
-        $this->assertEquals($this->input['date_return'], null);
+        $this->assertNull($this->input['date_return']);
 
         $this->assertEquals($this->input['count_messages'], $ticket->getCountMessages());
         $this->assertEquals($this->input['count_messages_unread'], $ticket->getCountMessagesUnread());

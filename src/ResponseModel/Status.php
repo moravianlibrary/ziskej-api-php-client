@@ -6,9 +6,9 @@ namespace Mzk\ZiskejApi\ResponseModel;
 
 use DateTimeImmutable;
 use Mzk\ZiskejApi\Enum\StatusName;
-use SmartEmailing\Types\PrimitiveTypes;
+use SmartEmailing\Types\StringType;
 
-class Status
+final class Status
 {
     /**
      * Status created datetime
@@ -21,6 +21,7 @@ class Status
      * Status name
      *
      * @var string
+     *
      * @see \Mzk\ZiskejApi\Enum\StatusName
      */
     private string $name;
@@ -37,7 +38,8 @@ class Status
     }
 
     /**
-     * @param string[] $data
+     * @param array<string> $data
+     *
      * @return \Mzk\ZiskejApi\ResponseModel\Status
      *
      * @throws \Consistence\Enum\InvalidEnumValueException
@@ -46,8 +48,8 @@ class Status
     public static function fromArray(array $data): Status
     {
         return new self(
-            new DateTimeImmutable(PrimitiveTypes::extractString($data, 'date')),
-            PrimitiveTypes::extractString($data, 'id')
+            new DateTimeImmutable(StringType::extract($data, 'date')),
+            StringType::extract($data, 'id')
         );
     }
 

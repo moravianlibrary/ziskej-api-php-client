@@ -6,7 +6,6 @@ namespace Mzk\ZiskejApi;
 
 use PHPUnit\Framework\TestCase as PhpUnitTestCase;
 
-class TestCase extends PhpUnitTestCase
+abstract class TestCase extends PhpUnitTestCase
 {
-
 }

@@ -12,9 +12,8 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * A formatter that prints the HTTP message.
  */
-class CustomHttpMessageFormatter implements Formatter
+final class CustomHttpMessageFormatter implements Formatter
 {
-
     /**
      * The maximum length of the body.
      *
@@ -27,9 +26,6 @@ class CustomHttpMessageFormatter implements Formatter
         $this->maxBodyLength = $maxBodyLength;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function formatRequest(RequestInterface $request): string
     {
         $message = sprintf(
@@ -46,9 +42,6 @@ class CustomHttpMessageFormatter implements Formatter
         return $this->addBody($request, $message);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function formatResponse(ResponseInterface $response): string
     {
         $message = sprintf(

@@ -8,5 +8,4 @@ use Consistence\Enum\Enum;
 
 abstract class BaseEnum extends Enum
 {
-
 }

@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\RequestModel;
 
-class Reader
+use Mzk\ZiskejApi\Exception\ApiInputException;
+use SmartEmailing\Types\Emailaddress;
+
+final class Reader
 {
     /**
      * Reader first name
+     *
      * @var string
      */
     private string $firstName;
@@ -22,9 +26,9 @@ class Reader
     /**
      * Reader email address
      *
-     * @var string //@todo refactor to email object
+     * @var \SmartEmailing\Types\Emailaddress
      */
-    private string $email;
+    private Emailaddress $email;
 
     /**
      * Library sigla
@@ -77,14 +81,13 @@ class Reader
         bool $isGdprData,
         ?string $readerLibraryId = null
     ) {
-
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new \Mzk\ZiskejApi\Exception\ApiInputException('Invalid email format');
+            throw new ApiInputException('Invalid email format');
         }
 
         $this->firstName = $firstName;
         $this->lastName = $lastName;
-        $this->email = $email;
+        $this->email = Emailaddress::from($email);
         $this->sigla = $sigla;
         $this->isGdprReg = $isGdprReg;
         $this->isGdprData = $isGdprData;
@@ -92,14 +95,14 @@ class Reader
     }
 
     /**
-     * @return mixed[]
+     * @return array<mixed>
      */
     public function toArray(): array
     {
         return [
             'first_name' => $this->firstName,
             'last_name' => $this->lastName,
-            'email' => $this->email,
+            'email' => $this->email->getValue(),
             'sigla' => $this->sigla,
             'notification_enabled' => $this->isNotificationEnabled,
             'is_gdpr_reg' => $this->isGdprReg,
@@ -120,7 +123,7 @@ class Reader
 
     public function getEmail(): string
     {
-        return $this->email;
+        return $this->email->getValue();
     }
 
     public function getSigla(): string

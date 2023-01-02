@@ -7,7 +7,7 @@ namespace Mzk\ZiskejApi\ResponseModel;
 use SmartEmailing\Types\BoolType;
 use SmartEmailing\Types\FloatType;
 
-class EddEstimate
+final class EddEstimate
 {
     /**
      * @var float
@@ -30,7 +30,8 @@ class EddEstimate
     }
 
     /**
-     * @param string[] $data
+     * @param array<string> $data
+     *
      * @return \Mzk\ZiskejApi\ResponseModel\EddEstimate
      */
     public static function fromArray(array $data): EddEstimate
