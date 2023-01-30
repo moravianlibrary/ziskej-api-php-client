@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mzk\ZiskejApi;
 
+use Mzk\ZiskejApi\Enum\LibraryServiceType;
 use Mzk\ZiskejApi\Enum\TicketEddSubtype;
 use Mzk\ZiskejApi\Enum\TicketType;
 use Mzk\ZiskejApi\Exception\ApiException;
@@ -64,7 +65,7 @@ final class Api
                 '/libraries',
                 [],
                 [
-                    'service' => 'mvszk',
+                    'service' => LibraryServiceType::ANY_ZK,
                     'include_deactivated' => 1,
                 ]
             )
@@ -92,6 +93,8 @@ final class Api
      *
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      * @throws \Psr\Http\Client\ClientExceptionInterface
+     *
+     * @deprecated use Api::getLibrariesMvsActive() or Api::getLibrariesEddActive
      */
     public function getLibrariesActive(): LibraryCollection
     {
@@ -101,7 +104,79 @@ final class Api
                 '/libraries',
                 [],
                 [
-                    'service' => 'mvszk',
+                    'service' => LibraryServiceType::MVS_ZK,
+                ]
+            )
+        );
+
+        switch ($apiResponse->getStatusCode()) {
+            case 200:
+                $contents = $apiResponse->getBody()->getContents();
+                $array = json_decode($contents, true);
+                if (isset($array['items']) && is_array($array['items'])) {
+                    return LibraryCollection::fromArray($array['items']);
+                }
+                return new LibraryCollection();
+
+            default:
+                throw new ApiResponseException($apiResponse);
+        }
+    }
+
+    /**
+     * List all libraries active in Ziskej MVS
+     * GET /libraries
+     *
+     * @return \Mzk\ZiskejApi\ResponseModel\LibraryCollection
+     *
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
+    public function getLibrariesMvsActive(): LibraryCollection
+    {
+        $apiResponse = $this->apiClient->sendApiRequest(
+            new ApiRequest(
+                'GET',
+                '/libraries',
+                [],
+                [
+                    'service' => LibraryServiceType::MVS_ZK,
+                ]
+            )
+        );
+
+        switch ($apiResponse->getStatusCode()) {
+            case 200:
+                $contents = $apiResponse->getBody()->getContents();
+                $array = json_decode($contents, true);
+                if (isset($array['items']) && is_array($array['items'])) {
+                    return LibraryCollection::fromArray($array['items']);
+                }
+                return new LibraryCollection();
+
+            default:
+                throw new ApiResponseException($apiResponse);
+        }
+    }
+
+    /**
+     * List all libraries active in Ziskej EDD
+     * GET /libraries
+     *
+     * @return \Mzk\ZiskejApi\ResponseModel\LibraryCollection
+     *
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
+    public function getLibrariesEddActive(): LibraryCollection
+    {
+        $apiResponse = $this->apiClient->sendApiRequest(
+            new ApiRequest(
+                'GET',
+                '/libraries',
+                [],
+                [
+                    'service' => LibraryServiceType::EDD_ZK,
                 ]
             )
         );
