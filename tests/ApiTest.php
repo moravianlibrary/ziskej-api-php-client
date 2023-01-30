@@ -166,6 +166,8 @@ final class ApiTest extends TestCase
     /**
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      * @throws \Psr\Http\Client\ClientExceptionInterface
+     *
+     * @deprecated
      */
     public function testApiGetLibrariesActive(): void
     {
@@ -177,6 +179,47 @@ final class ApiTest extends TestCase
         $api = new Api($apiClient);
 
         $output = $api->getLibrariesActive();
+
+        $this->assertInstanceOf(LibraryCollection::class, $output);
+        $this->assertNotEmpty($output->getAll());
+    }
+
+    /**
+     * @return void
+     *
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
+    public function testApiGetLibrariesMvsActive(): void
+    {
+        $guzzleClient = Client::createWithConfig([
+            'connect_timeout' => 10,
+        ]);
+
+        $apiClient = new ApiClient($guzzleClient, $this->baseUrl, null, $this->logger);
+        $api = new Api($apiClient);
+
+        $output = $api->getLibrariesMvsActive();
+
+        $this->assertInstanceOf(LibraryCollection::class, $output);
+        $this->assertNotEmpty($output->getAll());
+    }
+
+    /**
+     * @return void
+     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
+    public function testApiGetLibrariesEddActive(): void
+    {
+        $guzzleClient = Client::createWithConfig([
+            'connect_timeout' => 10,
+        ]);
+
+        $apiClient = new ApiClient($guzzleClient, $this->baseUrl, null, $this->logger);
+        $api = new Api($apiClient);
+
+        $output = $api->getLibrariesEddActive();
 
         $this->assertInstanceOf(LibraryCollection::class, $output);
         $this->assertNotEmpty($output->getAll());
