@@ -472,14 +472,15 @@ final class Ticket
 
     public function getPaymentUrl(): ?string
     {
-        return $this->paymentUrl->getValue();
+        return $this->paymentUrl instanceof UrlType
+            ? $this->paymentUrl->getValue()
+            : null;
     }
 
-    /**
-     * @return string|null
-     */
     public function getDownloadUrl(): ?string
     {
-        return $this->downloadUrl->getValue();
+        return $this->downloadUrl instanceof UrlType
+            ? $this->downloadUrl->getValue()
+            : null;
     }
 }
