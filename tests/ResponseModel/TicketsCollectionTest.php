@@ -15,7 +15,7 @@ final class TicketsCollectionTest extends TestCase
         [
             'ticket_id' => 'abc0000000000001',
             'ticket_type' => 'mvs',
-            'hid' => 000001,
+            'hid' => '000001',
             'sigla' => 'BOA001',
             'doc_id' => 'mzk.MZK01-000000001',
             'status_reader' => 'created',
@@ -39,7 +39,7 @@ final class TicketsCollectionTest extends TestCase
         [
             'ticket_id' => 'abc0000000000002',
             'ticket_type' => 'mvs',   // test default value
-            'hid' => 000002,
+            'hid' => '000002',
             'sigla' => 'BOA001',
             'doc_id' => 'mzk.MZK01-000000002',
             'status_reader' => 'accepted',
@@ -70,9 +70,9 @@ final class TicketsCollectionTest extends TestCase
 
     public function testCreateEmptyObject(): void
     {
-        $ticketsCollection = new TicketsCollection();
+        $ticketsCollection = new TicketCollection();
         $tickets = $ticketsCollection->getAll();
-        $this->assertEquals([], $tickets);
+        $this->assertSame([], $tickets);
     }
 
     /**
@@ -80,7 +80,7 @@ final class TicketsCollectionTest extends TestCase
      */
     public function testCreateFromArray(): void
     {
-        $ticketsCollection = TicketsCollection::fromArray($this->input);
+        $ticketsCollection = TicketCollection::fromArray($this->input);
         $tickets = $ticketsCollection->getAll();
 
         $this->assertCount(2, $tickets);

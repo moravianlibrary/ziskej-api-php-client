@@ -10,51 +10,31 @@ use SmartEmailing\Types\FloatType;
 final class EddEstimate
 {
     /**
-     * @var float
+     * @param float $fee Estimated fee
+     * @param float $feeDk Estimated fee, part for library (DK).
+     * @param float $feeDilia Estimated fee, part for Dília.
+     * @param bool $isValid Estimate is valud
      */
-    private float $fee;
-
-    /**
-     * @var bool
-     */
-    private bool $isValid;
-
-    /**
-     * @param float $fee
-     * @param bool $is_valid
-     */
-    private function __construct(float $fee, bool $is_valid)
-    {
-        $this->fee = $fee;
-        $this->isValid = $is_valid;
+    public function __construct(
+        public readonly float $fee,
+        public readonly float $feeDk,
+        public readonly float $feeDilia,
+        public readonly bool $isValid
+    ) {
     }
 
     /**
-     * @param array<string> $data
+     * @param array<mixed> $data
      *
      * @return \Mzk\ZiskejApi\ResponseModel\EddEstimate
      */
     public static function fromArray(array $data): EddEstimate
     {
         return new self(
-            FloatType::extract($data, 'fee'),
-            BoolType::extract($data, 'is_valid')
+            (float) FloatType::extractOrNull($data, 'fee', true),
+            (float) FloatType::extractOrNull($data, 'fee_dk'),
+            (float) FloatType::extractOrNull($data, 'fee_dilia'),
+            (bool) BoolType::extractOrNull($data, 'is_valid')
         );
-    }
-
-    /**
-     * @return float
-     */
-    public function getFee(): float
-    {
-        return $this->fee;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isValid(): bool
-    {
-        return $this->isValid;
     }
 }

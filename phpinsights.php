@@ -64,6 +64,7 @@ return [
         //NunoMaduro\PhpInsights\Domain\Insights\CyclomaticComplexityIsHigh::class,
         PHP_CodeSniffer\Standards\Generic\Sniffs\Commenting\TodoSniff::class,
         PHP_CodeSniffer\Standards\Generic\Sniffs\Formatting\SpaceAfterNotSniff::class,
+        SlevomatCodingStandard\Sniffs\Classes\ForbiddenPublicPropertySniff::class,
         SlevomatCodingStandard\Sniffs\Classes\SuperfluousExceptionNamingSniff::class,
         SlevomatCodingStandard\Sniffs\Classes\SuperfluousInterfaceNamingSniff::class,
         SlevomatCodingStandard\Sniffs\Commenting\UselessFunctionDocCommentSniff::class,
@@ -85,7 +86,7 @@ return [
         ],
         NunoMaduro\PhpInsights\Domain\Insights\CyclomaticComplexityIsHigh::class => [
             'maxComplexity' => 10,
-        ]
+        ],
     ],
 
     /*

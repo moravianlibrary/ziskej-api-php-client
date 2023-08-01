@@ -13,6 +13,7 @@ use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Message\Authentication;
+use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
 final class ApiClient
@@ -22,7 +23,7 @@ final class ApiClient
      *
      * @var string|\Psr\Http\Message\UriInterface|null
      */
-    private $baseUri;
+    private string|UriInterface|null $baseUri;
 
     /**
      * @var \Http\Client\HttpClient
@@ -89,11 +90,11 @@ final class ApiClient
     {
         $requestFactory = Psr17FactoryDiscovery::findRequestFactory();
 
-        $body = Utils::streamFor(json_encode($requestObject->getParamsData()));
+        $body = Utils::streamFor(json_encode($requestObject->paramsData));
 
         $request = $requestFactory->createRequest(
-            $requestObject->getMethod(),
-            $requestObject->getUri()
+            $requestObject->method,
+            $requestObject->getPath()
         )
             ->withHeader('Content-Type', 'application/json')
             ->withBody($body);

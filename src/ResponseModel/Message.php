@@ -10,50 +10,18 @@ use SmartEmailing\Types\StringType;
 
 final class Message
 {
-    /**
-     * @var string
-     */
-    private string $sender;
-
-    /**
-     * @var \DateTimeImmutable
-     */
-    private DateTimeImmutable $createdAt;
-
-    /**
-     * @var bool
-     */
-    private bool $read;
-
-    /**
-     * @var string
-     */
-    private string $text;
-
-    /**
-     * Message constructor.
-     *
-     * @param string $sender
-     * @param \DateTimeImmutable $date
-     * @param bool $read
-     * @param string $text
-     */
     public function __construct(
-        string $sender,
-        DateTimeImmutable $date,
-        bool $read,
-        string $text
+        public readonly string $sender,
+        public readonly DateTimeImmutable $createdAt,
+        public readonly bool $read,
+        public readonly string $text
     ) {
-        $this->sender = $sender;
-        $this->createdAt = $date;
-        $this->read = $read;
-        $this->text = $text;
     }
 
     /**
      * @param array<string> $data
      *
-     * @return \Mzk\ZiskejApi\ResponseModel\Message
+     * @return Message
      *
      * @throws \Exception
      */
@@ -65,25 +33,5 @@ final class Message
             !BoolType::extract($data, 'unread'),
             StringType::extract($data, 'text')
         );
-    }
-
-    public function getSender(): string
-    {
-        return $this->sender;
-    }
-
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function isRead(): bool
-    {
-        return $this->read;
-    }
-
-    public function getText(): string
-    {
-        return $this->text;
     }
 }

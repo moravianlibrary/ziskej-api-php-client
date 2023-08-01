@@ -9,49 +9,41 @@ use DevCoder\DotEnv;
 use Http\Adapter\Guzzle7\Client;
 use Http\Message\Authentication\Bearer;
 use Monolog\Logger;
-use Mzk\ZiskejApi\Enum\TicketEddDocDataSource;
+use Mzk\ZiskejApi\Enum\TicketDataSource;
 use Mzk\ZiskejApi\Enum\TicketEddSubtype;
 use Mzk\ZiskejApi\Exception\ApiResponseException;
 use Mzk\ZiskejApi\ResponseModel\EddEstimate;
 use Mzk\ZiskejApi\ResponseModel\LibraryCollection;
 use Mzk\ZiskejApi\ResponseModel\MessageCollection;
-use Mzk\ZiskejApi\ResponseModel\Ticket;
-use Mzk\ZiskejApi\ResponseModel\TicketsCollection;
+use Mzk\ZiskejApi\ResponseModel\TicketEdd;
+use Mzk\ZiskejApi\ResponseModel\TicketMvs;
+use Mzk\ZiskejApi\ResponseModel\TicketCollection;
 use Psr\Log\LoggerInterface;
 
 final class ApiTest extends TestCase
 {
     /**
      * Test base url
-     *
-     * @var string
      */
     private string $baseUrl;
+
     /**
      * Test eppn of active reader
-     *
-     * @var string
      */
     private string $eppnActive = '1185@mzk.cz';
 
     /**
      * Test eppn of nonexistent reader
-     *
-     * @var string
      */
     private string $eppnNotExists = '0@mzk.cz';
 
     /**
      * Test eppn of dDeactivated reader
-     *
-     * @var string
      */
     private string $eppnDeactivated = '1184@mzk.cz';
 
     /**
      * Document id
-     *
-     * @var string
      */
     private string $docId = 'mzk.MZK01-001579506';
 
@@ -66,41 +58,28 @@ final class ApiTest extends TestCase
     ];
 
     /**
-     * @var string
+     * MVS ticket ID
      */
-    private string $ticketIdMvs = '160455000cf24524';
+    private string $ticketIdMvs = '0b6e062f83f24ad0';
 
     /**
-     * @var string
+     * EDD ticket ID
      */
-    private string $ticketIdEdd = '160455000cf24524';
+    private string $ticketIdEdd = '03f584fe6f0744d6';
 
-    /**
-     * @var string
-     */
     private string $note = 'This is a note';
 
-    /**
-     * @var string
-     */
     private string $messageText = 'This is my new message';
 
-    /**
-     * @var string
-     */
     private string $date = '2019-12-31';
 
     /**
      * Test wrong token
-     *
-     * @var string
      */
     private string $tokenWrong = '';
 
     /**
      * Logger
-     *
-     * @var \Psr\Log\LoggerInterface
      */
     private LoggerInterface $logger;
 
@@ -157,31 +136,10 @@ final class ApiTest extends TestCase
         $apiClient = new ApiClient($guzzleClient, $this->baseUrl, null, $this->logger);
         $api = new Api($apiClient);
 
-        $output = $api->getLibrariesAll();
+        $libraryCollection = $api->getLibrariesAll();
 
-        $this->assertInstanceOf(LibraryCollection::class, $output);
-        $this->assertNotEmpty($output->getAll());
-    }
-
-    /**
-     * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
-     * @throws \Psr\Http\Client\ClientExceptionInterface
-     *
-     * @deprecated
-     */
-    public function testApiGetLibrariesActive(): void
-    {
-        $guzzleClient = Client::createWithConfig([
-            'connect_timeout' => 10,
-        ]);
-
-        $apiClient = new ApiClient($guzzleClient, $this->baseUrl, null, $this->logger);
-        $api = new Api($apiClient);
-
-        $output = $api->getLibrariesActive();
-
-        $this->assertInstanceOf(LibraryCollection::class, $output);
-        $this->assertNotEmpty($output->getAll());
+        $this->assertInstanceOf(LibraryCollection::class, $libraryCollection);
+        $this->assertNotEmpty($libraryCollection->getAll());
     }
 
     /**
@@ -199,10 +157,10 @@ final class ApiTest extends TestCase
         $apiClient = new ApiClient($guzzleClient, $this->baseUrl, null, $this->logger);
         $api = new Api($apiClient);
 
-        $output = $api->getLibrariesMvsActive();
+        $libraryCollection = $api->getLibrariesMvsActive();
 
-        $this->assertInstanceOf(LibraryCollection::class, $output);
-        $this->assertNotEmpty($output->getAll());
+        $this->assertInstanceOf(LibraryCollection::class, $libraryCollection);
+        $this->assertNotEmpty($libraryCollection->getAll());
     }
 
     /**
@@ -239,9 +197,7 @@ final class ApiTest extends TestCase
 
         $this->assertInstanceOf(ResponseModel\Reader::class, $reader);
 
-        if ($reader !== null) {
-            $this->assertSame(true, $reader->isActive());
-        }
+        $this->assertSame(true, $reader->isActive);
     }
 
     /**
@@ -258,9 +214,7 @@ final class ApiTest extends TestCase
 
         $this->assertInstanceOf(ResponseModel\Reader::class, $reader);
 
-        if ($reader !== null) {
-            $this->assertSame(true, $reader->isActive());
-        }
+        $this->assertSame(true, $reader->isActive);
     }
 
     /**
@@ -286,11 +240,7 @@ final class ApiTest extends TestCase
 
         $reader = $api->getReader($this->eppnActive);
 
-        if ($reader) {
-            $this->assertTrue($reader->isActive());
-        } else {
-            $this->assertNull($reader);
-        }
+        $this->assertTrue($reader->isActive);
     }
 
     /**
@@ -305,9 +255,7 @@ final class ApiTest extends TestCase
 
         $this->assertInstanceOf(ResponseModel\Reader::class, $reader);
 
-        if ($reader !== null) {
-            $this->assertSame(true, $reader->isActive());
-        }
+        $this->assertSame(true, $reader->isActive);
     }
 
     /**
@@ -341,19 +289,6 @@ final class ApiTest extends TestCase
         $this->assertNull($reader);
     }
 
-//    public function testApiGetReader422DeactivatedReader(): void
-//    {
-//        $api = ApiFactory::createApi();
-//
-//        $reader = $api->getReader($this->eppnDeactivated);
-//
-//        $this->assertInstanceOf(ResponseModel\Reader::class, $reader);
-//
-//        if ($reader) {
-//            $this->assertSame(false, $reader->isActive());
-//        }
-//    }
-
     /**
      * @throws \Http\Client\Exception
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
@@ -374,20 +309,16 @@ final class ApiTest extends TestCase
 
         $outputReader = $api->createReader($this->eppnActive, $inputReader);
 
-        if ($outputReader) {
-            $this->assertInstanceOf(ResponseModel\Reader::class, $outputReader);
-            $this->assertIsString($outputReader->getReaderId());
+        $this->assertInstanceOf(ResponseModel\Reader::class, $outputReader);
+        $this->assertIsString($outputReader->id);
 
-            $this->assertSame($inputReader->getEmail(), $outputReader->getEmail());
-            $this->assertSame($inputReader->getFirstName(), $outputReader->getFirstName());
-            $this->assertSame($inputReader->getLastName(), $outputReader->getLastName());
-            $this->assertSame($inputReader->isGdprData(), $outputReader->isGdprData());
-            $this->assertSame($inputReader->isGdprReg(), $outputReader->isGdprReg());
-            $this->assertSame($inputReader->isNotificationEnabled(), $outputReader->isNotificationEnabled());
-            $this->assertSame($inputReader->getSigla(), $outputReader->getSigla());
-        } else {
-            $this->assertNull($outputReader);
-        }
+        $this->assertSame($inputReader->email, $outputReader->email);
+        $this->assertSame($inputReader->firstName, $outputReader->firstName);
+        $this->assertSame($inputReader->lastName, $outputReader->lastName);
+        $this->assertSame($inputReader->isGdprData, $outputReader->isGdprData);
+        $this->assertSame($inputReader->isGdprReg, $outputReader->isGdprReg);
+        $this->assertSame($inputReader->isNotificationEnabled, $outputReader->isNotificationEnabled);
+        $this->assertSame($inputReader->sigla, $outputReader->sigla);
     }
 
     /**
@@ -444,10 +375,7 @@ final class ApiTest extends TestCase
             true
         );
 
-        $output = $api->createReader($this->eppnActive, $reader);    //@todo
-
-        $this->assertIsArray($output);
-        $this->assertEmpty($output);
+        $api->createReader($this->eppnActive, $reader);
     }
 
     /**
@@ -470,20 +398,16 @@ final class ApiTest extends TestCase
 
         $outputReader = $api->updateReader($this->eppnActive, $inputReader);
 
-        if ($outputReader) {
-            $this->assertInstanceOf(ResponseModel\Reader::class, $outputReader);
-            $this->assertIsString($outputReader->getReaderId());
+        $this->assertInstanceOf(ResponseModel\Reader::class, $outputReader);
+        $this->assertIsString($outputReader->id);
 
-            $this->assertSame($inputReader->getEmail(), $outputReader->getEmail());
-            $this->assertSame($inputReader->getFirstName(), $outputReader->getFirstName());
-            $this->assertSame($inputReader->getLastName(), $outputReader->getLastName());
-            $this->assertSame($inputReader->isGdprData(), $outputReader->isGdprData());
-            $this->assertSame($inputReader->isGdprReg(), $outputReader->isGdprReg());
-            $this->assertSame($inputReader->isNotificationEnabled(), $outputReader->isNotificationEnabled());
-            $this->assertSame($inputReader->getSigla(), $outputReader->getSigla());
-        } else {
-            $this->assertNull($outputReader);
-        }
+        $this->assertSame($inputReader->email, $outputReader->email);
+        $this->assertSame($inputReader->firstName, $outputReader->firstName);
+        $this->assertSame($inputReader->lastName, $outputReader->lastName);
+        $this->assertSame($inputReader->isGdprData, $outputReader->isGdprData);
+        $this->assertSame($inputReader->isGdprReg, $outputReader->isGdprReg);
+        $this->assertSame($inputReader->isNotificationEnabled, $outputReader->isNotificationEnabled);
+        $this->assertSame($inputReader->sigla, $outputReader->sigla);
     }
 
     /**
@@ -540,10 +464,7 @@ final class ApiTest extends TestCase
             true
         );
 
-        $output = $api->updateReader($this->eppnActive, $reader);    //@todo
-
-        $this->assertIsArray($output);
-        $this->assertEmpty($output);
+        $api->updateReader($this->eppnActive, $reader);
     }
 
     /* TICKETS */
@@ -571,7 +492,7 @@ final class ApiTest extends TestCase
 
         $output = $api->getTickets($this->eppnActive);
 
-        $this->assertInstanceOf(TicketsCollection::class, $output);
+        $this->assertInstanceOf(TicketCollection::class, $output);
     }
 
     /**
@@ -588,7 +509,7 @@ final class ApiTest extends TestCase
 
         $output = $api->createTicket($this->eppnActive, $ticket);
 
-        $this->assertInstanceOf(Ticket::class, $output);
+        $this->assertInstanceOf(TicketMvs::class, $output);
     }
 
     /**
@@ -604,14 +525,14 @@ final class ApiTest extends TestCase
 
         $ticket = new RequestModel\TicketMvsRequest(
             $this->docId,
-            new DateTimeImmutable($this->date),
             $this->docAltIds,
-            $this->note
+            $this->note,
+            new DateTimeImmutable($this->date)
         );
 
         $output = $api->createTicket($this->eppnActive, $ticket);
 
-        $this->assertInstanceOf(Ticket::class, $output);
+        $this->assertInstanceOf(TicketMvs::class, $output);
     }
 
     /**
@@ -625,7 +546,7 @@ final class ApiTest extends TestCase
         $api = ApiFactory::createApi();
 
         $ticket = new RequestModel\TicketEddRequest(
-            TicketEddDocDataSource::AUTO,
+            TicketDataSource::AUTO,
             TicketEddSubtype::ARTICLE,
             'Zahrádkář. -- ISSN 0139-7761. -- Roč. 54, č. 1 (2022), s. 4-5',
             'Okrasná zahrada',
@@ -634,7 +555,7 @@ final class ApiTest extends TestCase
 
         $output = $api->createTicket($this->eppnActive, $ticket);
 
-        $this->assertInstanceOf(Ticket::class, $output);
+        $this->assertInstanceOf(TicketEdd::class, $output);
     }
 
     /**
@@ -648,28 +569,32 @@ final class ApiTest extends TestCase
         $api = ApiFactory::createApi();
 
         $ticket = new RequestModel\TicketEddRequest(
-            TicketEddDocDataSource::AUTO,
-            TicketEddSubtype::ARTICLE,
-            'Zahrádkář. -- ISSN 0139-7761. -- Roč. 54, č. 1 (2022), s. 4-5',
-            'Okrasná zahrada',
-            'anl.ANL01-001899088',
+            ticketDocDataSource: TicketDataSource::AUTO,
+            eddSubtype: TicketEddSubtype::ARTICLE,
+            docTitleIn: 'Zahrádkář. -- ISSN 0139-7761. -- Roč. 54, č. 1 (2022), s. 4-5',
+            docTitle: 'Okrasná zahrada',
+            documentId: 'anl.ANL01-001899088',
+            documentAltIds: [],
+            docIdIn: null,
+            readerNote: 'Zpráva od čtenáře pro knihovníka',
+            docNumberYear: '2022',
+            docNumberPyear: '2022',
+            docNumberPnumber: '1',
+            docVolume: null,
+            pagesFrom: 1,
+            pagesTo: 5,
+            docAuthor: 'Josef Černý',
+            docIssuer: 'Praha 1969',
+            docISSN: 'ISSN 0139-7761',
+            docISBN: null,
+            docCitation: 'ČERNÝ, Josef. Okrasná zahrada. Zahrádkář. 2022, 54(1), 4-5. ISSN 0139-7761.',
+            docNote: 'Poznámka k objednávce',
+            dateRequested: new DateTimeImmutable('+3 day')
         );
-        $ticket->setDocNumberYear('2022');
-        $ticket->setDocNumberPyear('2022');
-        $ticket->setDocNumberPnumber('1');
-        $ticket->setPagesFrom(1);
-        $ticket->setPagesTo(5);
-        $ticket->setDocAuthor('Josef Černý');
-        $ticket->setDocIssuer('Praha 1969');
-        $ticket->setDocISSN('ISSN 0139-7761');
-        $ticket->setDocCitation('ČERNÝ, Josef. Okrasná zahrada. Zahrádkář. 2022, 54(1), 4-5. ISSN 0139-7761.');
-        $ticket->setDocNote('Poznámka k objednávce');
-        $ticket->setReaderNote('Zpráva od čtenáře pro knihovníka');
-        $ticket->setDateRequested(new DateTimeImmutable('+3 day'));
 
         $output = $api->createTicket($this->eppnActive, $ticket);
 
-        $this->assertInstanceOf(Ticket::class, $output);
+        $this->assertInstanceOf(TicketEdd::class, $output);
     }
 
     /**
@@ -683,7 +608,7 @@ final class ApiTest extends TestCase
         $api = ApiFactory::createApi();
 
         $ticket = new RequestModel\TicketEddRequest(
-            TicketEddDocDataSource::AUTO,
+            TicketDataSource::AUTO,
             TicketEddSubtype::SELECTION,
             'Reflex : CS - Společenský týdeník',
             'Hula hoop!',
@@ -692,7 +617,7 @@ final class ApiTest extends TestCase
 
         $output = $api->createTicket($this->eppnActive, $ticket);
 
-        $this->assertInstanceOf(Ticket::class, $output);
+        $this->assertInstanceOf(TicketEdd::class, $output);
     }
 
     /**
@@ -706,32 +631,30 @@ final class ApiTest extends TestCase
         $api = ApiFactory::createApi();
 
         $ticket = new RequestModel\TicketEddRequest(
-            TicketEddDocDataSource::AUTO,
-            TicketEddSubtype::SELECTION,
-            'Reflex : CS - Společenský týdeník',
-            'Hula hoop!',
-            'vkol.SVK01-000489187'
+            ticketDocDataSource: TicketDataSource::AUTO,
+            eddSubtype: TicketEddSubtype::SELECTION,
+            docTitleIn: 'Reflex : CS - Společenský týdeník',
+            docTitle: 'Hula hoop!',
+            documentId: 'vkol.SVK01-000489187',
+            documentAltIds: [],
+            readerNote: 'Zpráva od čtenáře pro knihovníka',
+            docNumberYear: '2022',
+            docNumberPyear: '2022',
+            docNumberPnumber: '13',
+            pagesFrom: 38,
+            pagesTo: 40,
+            docAuthor: 'Veronika Bednářová',
+            docIssuer: 'Praha 2022',
+            docISSN: '0862-6634',
+            docISBN: '0862-6634',
+            docCitation: 'Reflex: CS - Společenský týdeník. Praha: Ringier ČR, 1990-. ISSN 0862-6634.',
+            docNote: 'Poznámka k objednávce',
+            dateRequested: new DateTimeImmutable('+3 day')
         );
-        //$ticket->setDocumentAltIds(); //@todo
-        $ticket->setDocNumberYear('2022');
-        $ticket->setDocNumberPyear('2022');
-        $ticket->setDocNumberPnumber('13');
-        $ticket->setDocVolume('13');
-        $ticket->setPagesFrom(38);
-        $ticket->setPagesTo(40);
-        $ticket->setDocAuthor('Veronika Bednářová');
-        $ticket->setDocIssuer('Praha 2022');
-        $ticket->setDocISSN('0862-6634');
-        $ticket->setDocISBN('0862-6634');
-
-        $ticket->setDocCitation('Reflex: CS - Společenský týdeník. Praha: Ringier ČR, 1990-. ISSN 0862-6634.');
-        $ticket->setDocNote('Poznámka k objednávce');
-        $ticket->setReaderNote('Zpráva od čtenáře pro knihovníka');
-        $ticket->setDateRequested(new DateTimeImmutable('+3 day'));
 
         $output = $api->createTicket($this->eppnActive, $ticket);
 
-        $this->assertInstanceOf(Ticket::class, $output);
+        $this->assertInstanceOf(TicketEdd::class, $output);
     }
 
     /**
@@ -744,11 +667,9 @@ final class ApiTest extends TestCase
 
         $output = $api->getTicket($this->eppnActive, $this->ticketIdMvs);
 
-        $this->assertInstanceOf(Ticket::class, $output);
+        $this->assertInstanceOf(TicketMvs::class, $output);
 
-        if ($output !== null) {
-            $this->assertSame($this->ticketIdMvs, $output->getId());
-        }
+        $this->assertSame($this->ticketIdMvs, $output->id);
     }
 
     /**
@@ -761,11 +682,9 @@ final class ApiTest extends TestCase
 
         $output = $api->getTicket($this->eppnActive, $this->ticketIdEdd);
 
-        $this->assertInstanceOf(Ticket::class, $output);
+        $this->assertInstanceOf(TicketEdd::class, $output);
 
-        if ($output !== null) {
-            $this->assertSame($this->ticketIdEdd, $output->getId());
-        }
+        $this->assertSame($this->ticketIdEdd, $output->id);
     }
 
     /* MESSAGES */
@@ -796,7 +715,7 @@ final class ApiTest extends TestCase
         $output = $api->createMessage($this->eppnActive, $this->ticketIdMvs, $message);
 
         $this->assertIsBool($output);
-        $this->assertEquals(true, $output);
+        $this->assertSame(true, $output);
     }
 
     /**
@@ -812,13 +731,12 @@ final class ApiTest extends TestCase
         $output = $api->updateMessages($this->eppnActive, $this->ticketIdMvs, $messages);
 
         $this->assertIsBool($output);
-        $this->assertEquals(true, $output);
+        $this->assertSame(true, $output);
     }
 
     /* ESTIMATE */
 
     /**
-     * @throws \Consistence\Enum\InvalidEnumValueException
      * @throws \Mzk\ZiskejApi\Exception\ApiResponseException
      * @throws \Psr\Http\Client\ClientExceptionInterface
      */
@@ -829,7 +747,7 @@ final class ApiTest extends TestCase
         $output = $api->getEddEstimateFee(10, TicketEddSubtype::ARTICLE);
 
         $this->assertInstanceOf(EddEstimate::class, $output);
-        $this->assertEquals(true, $output->isValid());
-        $this->assertEquals(60, $output->getFee());
+        $this->assertSame(true, $output->isValid);
+        $this->assertSame(71.0, $output->fee);
     }
 }

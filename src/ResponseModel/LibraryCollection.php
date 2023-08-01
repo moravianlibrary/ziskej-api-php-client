@@ -32,7 +32,7 @@ final class LibraryCollection
 
     public function addLibrary(Library $library): void
     {
-        $this->items[$library->getSigla()] = $library;
+        $this->items[$library->sigla] = $library;
     }
 
     /**

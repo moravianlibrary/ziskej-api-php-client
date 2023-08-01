@@ -8,18 +8,11 @@ final class Library
 {
     /**
      * Sigla code
-     *
-     * @var string
      */
-    private string $sigla;
+    public readonly string $sigla;
 
     public function __construct(string $sigla)
     {
         $this->sigla = $sigla;
-    }
-
-    public function getSigla(): string
-    {
-        return $this->sigla;
     }
 }
