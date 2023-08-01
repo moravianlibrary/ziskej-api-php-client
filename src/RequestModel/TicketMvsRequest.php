@@ -11,57 +11,23 @@ final class TicketMvsRequest extends TicketRequest
 {
     /**
      * Ticket type
-     *
-     * @see \Mzk\ZiskejApi\Enum\TicketType
      */
     private const TICKET_TYPE = TicketType::MVS;
 
     /**
-     * Document ID
-     *
-     * @var string
-     */
-    protected string $documentId;
-
-    /**
-     * Requested date
-     *
-     * @var \DateTimeImmutable|null
-     */
-    protected ?DateTimeImmutable $dateRequested = null;
-
-    /**
-     * Alternative document IDs
-     *
-     * @var array<string>
-     */
-    protected array $documentAltIds = [];
-
-    /**
-     * Reader's note to librarian
-     *
-     * @var string|null
-     */
-    protected ?string $readerNote = null;
-
-    /**
      * Ticket MVS constructor
      *
-     * @param string $documentId
-     * @param \DateTimeImmutable|null $dateRequested
-     * @param array<string> $documentAltIds
-     * @param string|null $readerNote
+     * @param string $documentId Document ID
+     * @param array<string> $documentAltIds Alternative document IDs
+     * @param string|null $readerNote Reader's note to librarian
+     * @param \DateTimeImmutable|null $dateRequested Requested date
      */
     public function __construct(
-        string $documentId,
-        ?DateTimeImmutable $dateRequested = null,
-        array $documentAltIds = [],
-        ?string $readerNote = null
+        public readonly string $documentId,
+        public readonly ?array $documentAltIds = [],
+        public readonly ?string $readerNote = null,
+        public readonly ?DateTimeImmutable $dateRequested = null
     ) {
-        $this->documentId = $documentId;
-        $this->dateRequested = $dateRequested;
-        $this->documentAltIds = $documentAltIds;
-        $this->readerNote = $readerNote;
     }
 
     /**
@@ -70,7 +36,7 @@ final class TicketMvsRequest extends TicketRequest
     public function toArray(): array
     {
         $return = [
-            'ticket_type' => self::TICKET_TYPE,
+            'ticket_type' => self::TICKET_TYPE->value,
             'doc_id' => $this->documentId,
         ];
 
@@ -87,54 +53,5 @@ final class TicketMvsRequest extends TicketRequest
         }
 
         return $return;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDocumentId(): string
-    {
-        return $this->documentId;
-    }
-
-    /**
-     * @return \DateTimeImmutable|null
-     */
-    public function getDateRequested(): ?DateTimeImmutable
-    {
-        return $this->dateRequested;
-    }
-
-    /**
-     * @return array<string>
-     */
-    public function getDocumentAltIds(): array
-    {
-        return $this->documentAltIds;
-    }
-
-    /**
-     * @param array<string> $documentAltIds
-     */
-    public function setDocumentAltIds(array $documentAltIds): void
-    {
-        $this->documentAltIds = $documentAltIds;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getNote(): ?string
-    {
-        return $this->readerNote;
-    }
-
-    /**
-     * @param string|null $readerNote
-     * @todo remove setter
-     */
-    public function setNote(?string $readerNote): void
-    {
-        $this->readerNote = $readerNote;
     }
 }

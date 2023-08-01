@@ -15,15 +15,11 @@ use Psr\Http\Message\ResponseInterface;
 final class CustomHttpMessageFormatter implements Formatter
 {
     /**
-     * The maximum length of the body.
-     *
-     * @var int|null
+     * @param int|null $maxBodyLength The maximum length of the body.
      */
-    private ?int $maxBodyLength;
-
-    public function __construct(?int $maxBodyLength = 1000)
-    {
-        $this->maxBodyLength = $maxBodyLength;
+    public function __construct(
+        private readonly ?int $maxBodyLength = 1000
+    ) {
     }
 
     public function formatRequest(RequestInterface $request): string
@@ -62,7 +58,7 @@ final class CustomHttpMessageFormatter implements Formatter
      * Add the message body if the stream is seekable.
      *
      * @param \Psr\Http\Message\MessageInterface $request
-     * @param string           $message
+     * @param string $message
      *
      * @return string
      */
@@ -76,10 +72,10 @@ final class CustomHttpMessageFormatter implements Formatter
 
         $message = preg_replace('/Authorization: .*/', 'Authorization: [...]', $message);
 
-        if ($this->maxBodyLength === null) {
-            $message .= "\n" . $stream->__toString();
-        } else {
+        if ($this->maxBodyLength > 0) {
             $message .= "\n" . mb_substr($stream->__toString(), 0, $this->maxBodyLength);
+        } else {
+            $message .= "\n" . $stream->__toString();
         }
 
         $stream->rewind();

@@ -8,36 +8,32 @@ final class ApiRequest
 {
     /**
      * HTTP Method
-     *
-     * @var string
      */
-    private string $method;
+    public readonly string $method;
 
     /**
      * URI endpoint
-     *
-     * @var string
      */
-    private string $endpoint;
+    public readonly string $endpoint;
 
     /**
      * @var array<string>
      */
-    private array $urlQuery;
+    public readonly array $urlQuery;
 
     /**
      * URL params
      *
      * @var array<string, int|string>
      */
-    private array $paramsUrl;
+    public readonly array $paramsUrl;
 
     /**
      * Data params
      *
-     * @var array<string>
+     * @var array<mixed>
      */
-    private array $paramsData;
+    public readonly array $paramsData;
 
     /**
      * RequestModel constructor.
@@ -46,7 +42,7 @@ final class ApiRequest
      * @param string $endpoint
      * @param array<string> $urlQuery
      * @param array<string, int|string> $paramsUrl
-     * @param array<string> $paramsData
+     * @param array<mixed> $paramsData
      */
     public function __construct(
         string $method,
@@ -62,44 +58,24 @@ final class ApiRequest
         $this->paramsData = $paramsData;
     }
 
-    public function getMethod(): string
-    {
-        return $this->method;
-    }
-
-    public function getEndpoint(): string
-    {
-        return $this->endpoint;
-    }
-
-    /**
-     * @return array<string>
-     */
-    public function getParamsData(): array
-    {
-        return $this->paramsData;
-    }
-
     /**
      * @return string
      */
-    public function getUri(): string
+    public function getPath(): string
     {
-        $uri = '';
+        $path = '';
 
         if (count($this->urlQuery)) {
-            $uri .= $this->render($this->endpoint, $this->urlQuery);
+            $path .= $this->render($this->endpoint, $this->urlQuery);
         } else {
-            $uri .= $this->endpoint;
+            $path .= $this->endpoint;
         }
 
         if (count($this->paramsUrl)) {
-            $uri .= '?' . http_build_query($this->paramsUrl);
+            $path .= '?' . http_build_query($this->paramsUrl);
         }
 
-        //@todo create url by using Url object
-
-        return $uri;
+        return $path;
     }
 
     /**

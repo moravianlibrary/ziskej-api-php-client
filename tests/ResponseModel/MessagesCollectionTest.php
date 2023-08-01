@@ -30,7 +30,7 @@ final class MessagesCollectionTest extends TestCase
     {
         $messageCollection = new MessageCollection();
         $message = $messageCollection->getAll();
-        $this->assertEquals([], $message);
+        $this->assertSame([], $message);
     }
 
     /**

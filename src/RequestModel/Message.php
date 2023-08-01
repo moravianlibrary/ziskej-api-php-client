@@ -8,10 +8,8 @@ final class Message
 {
     /**
      * Message text
-     *
-     * @var string
      */
-    private string $text;
+    public readonly string $text;
 
     public function __construct(string $text)
     {
@@ -26,10 +24,5 @@ final class Message
         return [
             'text' => $this->text,
         ];
-    }
-
-    public function getText(): string
-    {
-        return $this->text;
     }
 }

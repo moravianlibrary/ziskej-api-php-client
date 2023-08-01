@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\ResponseModel;
 
-use Consistence\Enum\InvalidEnumValueException;
-use Mzk\ZiskejApi\Enum\StatusName;
 use Mzk\ZiskejApi\TestCase;
+use ValueError;
 
 final class StatusTest extends TestCase
 {
@@ -15,23 +14,23 @@ final class StatusTest extends TestCase
      */
     private array $input = [
         'date' => '2020-03-11',
-        'id' => StatusName::CREATED,
+        'id' => 'created',
     ];
 
     /**
-     * @throws \Consistence\Enum\InvalidEnumValueException
+     * @throws \Exception
      */
     public function testCreateFromArray(): void
     {
         $status = Status::fromArray($this->input);
 
-        $this->assertEquals($this->input['date'], $status->getCreatedAt()->format('Y-m-d'));
-        $this->assertEquals($this->input['id'], $status->getName());
+        $this->assertSame($this->input['date'], $status->createdAt->format('Y-m-d'));
+        $this->assertSame($this->input['id'], $status->statusName->value);
     }
 
     public function testWrongStatusName(): void
     {
-        $this->expectException(InvalidEnumValueException::class);
+        $this->expectException(ValueError::class);
 
         Status::fromArray([
             'date' => '2020-03-11',

@@ -5,113 +5,104 @@ declare(strict_types=1);
 namespace Mzk\ZiskejApi\ResponseModel;
 
 use SmartEmailing\Types\BoolType;
-use SmartEmailing\Types\Emailaddress;
 use SmartEmailing\Types\IntType;
 use SmartEmailing\Types\StringType;
 
 final class Reader
 {
     /**
-     * Ziskej ID
-     *
-     * @var string
+     * Ziskej reader ID
      */
-    private string $readerId;
+    public readonly string $id;
 
     /**
      * Active in Ziskej
-     *
-     * @var bool
      */
-    private bool $isActive;
+    public readonly bool $isActive;
 
     /**
      * Firstname
-     *
-     * @var string|null
      */
-    private ?string $firstName = null;
+    public readonly string $firstName;
 
     /**
      * Lastname
-     *
-     * @var string|null
      */
-    private ?string $lastName = null;
+    public readonly string $lastName;
 
     /**
      * Email address
-     *
-     * @var \SmartEmailing\Types\Emailaddress|null
      */
-    private ?Emailaddress $email = null;
+    public readonly string $email;
 
     /**
      * Zda posílat notifikace
-     *
-     * @var bool|null
      */
-    private ?bool $isNotificationEnabled = null;
+    public readonly bool $isNotificationEnabled;
 
     /**
      * Sigla mateřské knihovny
-     *
-     * @var string|null
      */
-    private ?string $sigla = null;
+    public readonly string $sigla;
 
     /**
      * Souhlas s registrací
-     *
-     * @var bool|null
      */
-    private ?bool $isGdprReg;
+    public readonly bool $isGdprReg;
 
     /**
      * Souhlas s uložením dat
-     *
-     * @var bool|null
      */
-    private ?bool $isGdprData;
+    public readonly bool $isGdprData;
 
     /**
      * Count of tickets
-     *
-     * @var int|null
      */
-    private ?int $countTickets = null;
+    public readonly int $countTickets;
 
     /**
      * Count of open tickets
-     *
-     * @var int|null
      */
-    private ?int $countTicketsOpen = null;
+    public readonly int $countTicketsOpen;
 
     /**
      * Count of messages
-     *
-     * @var int|null
      */
-    private ?int $countMessages = null;
+    public readonly int $countMessages;
 
     /**
      * Count of unread messages
-     *
-     * @var int|null
      */
-    private ?int $countMessagesUnread = null;
+    public readonly int $countMessagesUnread;
 
     public function __construct(
-        string $readerId,
+        string $id,
         bool $isActive,
+        string $firstName,
+        string $lastName,
+        string $email,
+        bool $isNotificationEnabled,
+        string $sigla,
         bool $isGdprReg,
-        bool $isGdprData
+        bool $isGdprData,
+        int $countTickets,
+        int $countTicketsOpen,
+        int $countMessages,
+        int $countMessagesUnread
     ) {
-        $this->readerId = $readerId;
+        $this->id = $id;
         $this->isActive = $isActive;
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
+        $this->email = $email;
+        $this->isNotificationEnabled = $isNotificationEnabled;
+        $this->sigla = $sigla;
         $this->isGdprReg = $isGdprReg;
         $this->isGdprData = $isGdprData;
+        $this->countTickets = $countTickets;
+        $this->countTicketsOpen = $countTicketsOpen;
+        $this->countMessages = $countMessages;
+        $this->countMessagesUnread = $countMessagesUnread;
     }
 
     /**
@@ -121,90 +112,20 @@ final class Reader
      */
     public static function fromArray(array $data): Reader
     {
-        $self = new self(
-            StringType::extract($data, 'reader_id'),
-            BoolType::extract($data, 'is_active'),
-            BoolType::extract($data, 'is_gdpr_reg'),
-            BoolType::extract($data, 'is_gdpr_data')
+        return new self(
+            id: StringType::extract($data, 'reader_id'),
+            isActive: (bool) BoolType::extractOrNull($data, 'is_active', true),
+            firstName: (string) StringType::extractOrNull($data, 'first_name', true),
+            lastName: (string) StringType::extractOrNull($data, 'last_name', true),
+            email: (string) StringType::extractOrNull($data, 'email', true),
+            isNotificationEnabled: (bool) BoolType::extractOrNull($data, 'notification_enabled', true),
+            sigla: (string) StringType::extractOrNull($data, 'sigla', true),
+            isGdprReg: (bool) BoolType::extractOrNull($data, 'is_gdpr_reg'),
+            isGdprData: (bool) BoolType::extractOrNull($data, 'is_gdpr_data'),
+            countTickets: (int) IntType::extractOrNull($data, 'count_tickets', true),
+            countTicketsOpen: (int) IntType::extractOrNull($data, 'count_tickets_open', true),
+            countMessages: (int) IntType::extractOrNull($data, 'count_messages', true),
+            countMessagesUnread: (int) IntType::extractOrNull($data, 'count_messages_unread', true)
         );
-
-        $self->firstName = StringType::extractOrNull($data, 'first_name', true);
-        $self->lastName = StringType::extractOrNull($data, 'last_name', true);
-        $self->email = Emailaddress::extractOrNull($data, 'email', true);
-        //@todo make not null:
-        $self->isNotificationEnabled
-            = BoolType::extractOrNull($data, 'notification_enabled', true);
-        $self->sigla = StringType::extractOrNull($data, 'sigla', true);
-        $self->countTickets = IntType::extractOrNull($data, 'count_tickets', true);
-        $self->countTicketsOpen = IntType::extractOrNull($data, 'count_tickets_open', true);
-        $self->countMessages = IntType::extractOrNull($data, 'count_messages', true);
-        $self->countMessagesUnread
-            = IntType::extractOrNull($data, 'count_messages_unread', true);
-        return $self;
-    }
-
-    public function getReaderId(): string
-    {
-        return $this->readerId;
-    }
-
-    public function isActive(): bool
-    {
-        return $this->isActive;
-    }
-
-    public function getFirstName(): ?string
-    {
-        return $this->firstName;
-    }
-
-    public function getLastName(): ?string
-    {
-        return $this->lastName;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email->getValue();
-    }
-
-    public function isNotificationEnabled(): ?bool
-    {
-        return $this->isNotificationEnabled;
-    }
-
-    public function getSigla(): ?string
-    {
-        return $this->sigla;
-    }
-
-    public function isGdprReg(): ?bool
-    {
-        return $this->isGdprReg;
-    }
-
-    public function isGdprData(): ?bool
-    {
-        return $this->isGdprData;
-    }
-
-    public function getCountTickets(): ?int
-    {
-        return $this->countTickets;
-    }
-
-    public function getCountTicketsOpen(): ?int
-    {
-        return $this->countTicketsOpen;
-    }
-
-    public function getCountMessages(): ?int
-    {
-        return $this->countMessages;
-    }
-
-    public function getCountMessagesUnread(): ?int
-    {
-        return $this->countMessagesUnread;
     }
 }

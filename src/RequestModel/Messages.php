@@ -6,10 +6,7 @@ namespace Mzk\ZiskejApi\RequestModel;
 
 final class Messages
 {
-    /**
-     * @var bool
-     */
-    private bool $read;
+    public readonly bool $read;
 
     public function __construct(bool $read)
     {
@@ -17,7 +14,7 @@ final class Messages
     }
 
     /**
-     * @return array<mixed>
+     * @return array<bool>
      */
     public function toArray(): array
     {

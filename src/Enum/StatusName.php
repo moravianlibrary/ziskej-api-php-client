@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Mzk\ZiskejApi\Enum;
 
-abstract class StatusName extends BaseEnum
+enum StatusName: string
 {
-    public const CREATED = 'created';
-    public const PAID = 'paid';
-    public const UNPAID = 'unpaid';
-    public const ACCEPTED = 'accepted';
-    public const PREPARED = 'prepared';
-    public const LENT = 'lent';
-    public const CLOSED = 'closed';
-    public const CANCELLED = 'cancelled';
-    public const REJECTED = 'rejected';
+    case CREATED = 'created';
+    case PAID = 'paid';
+    case UNPAID = 'unpaid';
+    case ACCEPTED = 'accepted';
+    case PREPARED = 'prepared';
+    case LENT = 'lent';
+    case CLOSED = 'closed';
+    case CANCELLED = 'cancelled';
+    case REJECTED = 'rejected';
 }

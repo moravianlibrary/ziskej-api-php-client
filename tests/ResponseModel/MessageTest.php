@@ -23,23 +23,23 @@ final class MessageTest extends TestCase
     /**
      * @throws \Exception
      */
-    public function testCreateFromArray(): void
+    public function testCreateFromArrayFull(): void
     {
         $message = Message::fromArray($this->input);
 
         $this->assertInstanceOf(Message::class, $message);
 
-        $this->assertEquals($this->input['sender'], $message->getSender());
-        $this->assertEquals($this->input['unread'], !$message->isRead());
-        $this->assertEquals($this->input['created_datetime'], $message->getCreatedAt()->format('Y-m-d\TH:i:sP'));
-        $this->assertInstanceOf(DateTimeImmutable::class, $message->getCreatedAt());
-        $this->assertEquals($this->input['text'], $message->getText());
+        $this->assertSame($this->input['sender'], $message->sender);
+        $this->assertSame($this->input['unread'], !$message->read);
+        $this->assertInstanceOf(DateTimeImmutable::class, $message->createdAt);
+        $this->assertSame($this->input['created_datetime'], $message->createdAt->format('Y-m-d\TH:i:sP'));
+        $this->assertSame($this->input['text'], $message->text);
     }
 
     /**
      * @throws \Exception
      */
-    public function testCreateEmpty(): void
+    public function testCreateFromArrayEmpty(): void
     {
         $this->expectException(InvalidTypeException::class);
         Message::fromArray([]);
