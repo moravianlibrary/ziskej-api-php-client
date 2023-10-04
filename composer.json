@@ -1,6 +1,5 @@
 {
     "name": "moravianlibrary/ziskej-api-php-client",
-    "version": "8.0.0",
     "description": "Ziskej API PHP client",
     "type": "library",
     "license": "MIT",
