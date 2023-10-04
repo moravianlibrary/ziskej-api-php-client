@@ -17,7 +17,7 @@ final class ApiFactory
     {
         $keyFile = __DIR__ . '/../.private/cert-cpk-ziskej-api.key';
 
-        $signer = Sha512::create();
+        $signer = new Sha512();
         $privateKey = Key\InMemory::file($keyFile);
 
         $config = Configuration::forSymmetricSigner(
