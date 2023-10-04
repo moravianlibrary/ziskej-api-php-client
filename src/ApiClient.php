@@ -9,10 +9,10 @@ use Http\Client\Common\Plugin\AuthenticationPlugin;
 use Http\Client\Common\Plugin\BaseUriPlugin;
 use Http\Client\Common\Plugin\LoggerPlugin;
 use Http\Client\Common\PluginClient;
-use Http\Client\HttpClient;
-use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Discovery\Psr18ClientDiscovery;
 use Http\Message\Authentication;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
@@ -26,9 +26,9 @@ final class ApiClient
     private string|UriInterface|null $baseUri;
 
     /**
-     * @var \Http\Client\HttpClient
+     * @var ClientInterface
      */
-    private HttpClient $httpClient;
+    private ClientInterface $httpClient;
 
     /**
      * @var \Http\Message\Authentication|null
@@ -46,7 +46,7 @@ final class ApiClient
     private array $plugins = [];
 
     public function __construct(
-        ?HttpClient $httpClient,
+        ?ClientInterface $httpClient,
         ?string $baseUri,
         ?Authentication $authentication,
         ?LoggerInterface $logger
@@ -72,7 +72,7 @@ final class ApiClient
         }
 
         $this->httpClient = new PluginClient(
-            $httpClient ?? HttpClientDiscovery::find(),
+            $httpClient ?? Psr18ClientDiscovery::find(),
             $this->plugins
         );
     }
