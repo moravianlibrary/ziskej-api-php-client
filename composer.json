@@ -12,7 +12,7 @@
         "php-http/message-factory": "^1.1",
         "php-http/discovery": "^1.19",
         "php-http/logger-plugin": "^1.3",
-        "psr/http-message": "^2",
+        "psr/http-message": "^1.1||^2",
         "smartemailing/types": "^v3"
     },
     "require-dev": {
